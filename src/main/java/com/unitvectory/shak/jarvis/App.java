@@ -1,7 +1,9 @@
 package com.unitvectory.shak.jarvis;
 
 /**
- * Main application.
+ * The main application.
+ * 
+ * @author Jared Hatfield
  * 
  */
 public class App {
