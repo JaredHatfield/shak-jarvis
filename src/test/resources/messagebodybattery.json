@@ -1,0 +1,11 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "0fffffff-fffff-ffff-ffff-fffffffffff",
+  "TopicArn" : "arn:aws:sns:us-east-1:00000000000:sensors",
+  "Message" : "{\"auth\":\"foobar\",\"id\":\"1fffffff-fffff-ffff-ffff-fffffffffff\",\"deviceId\":\"2fffffff-fffff-ffff-ffff-fffffffffff\",\"hubId\":\"3fffffff-fffff-ffff-ffff-fffffffffff\",\"locationId\":\"4fffffff-fffff-ffff-ffff-fffffffffff\",\"description\":\"contactState: 0, accelerationState: 0, temp: 144, battery: 1C, rssi: 99, lqi: 255\",\"descriptionText\":\"Front Door Battery was 75%\",\"name\":\"battery\",\"unit\":\"%\",\"source\":\"DEVICE\",\"value\":\"75\",\"date\":\"2013-12-30T16:06:24.609Z\"}",
+  "Timestamp" : "2013-12-30T16:03:08.986Z",
+  "SignatureVersion" : "0",
+  "Signature" : "FAKE_SIGNATURE",
+  "SigningCertURL" : "FAKE_SIGNING_CERT_URL",
+  "UnsubscribeURL" : "FAKE_UNSUBSCRIBE_URL"
+}

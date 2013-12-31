@@ -1,0 +1,11 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "0fffffff-fffff-ffff-ffff-fffffffffff",
+  "TopicArn" : "arn:aws:sns:us-east-1:00000000000:sensors",
+  "Message" : "{\"auth\":\"foobar\",\"id\":\"1fffffff-fffff-ffff-ffff-fffffffffff\",\"deviceId\":\"2fffffff-fffff-ffff-ffff-fffffffffff\",\"hubId\":\"3fffffff-fffff-ffff-ffff-fffffffffff\",\"locationId\":\"4fffffff-fffff-ffff-ffff-fffffffffff\",\"description\":\"raw:08EF170A59FF, dni:08EF, battery:17, batteryDivisor:0A, rssi:59, lqi:FF\",\"descriptionText\":\"Sensor was -39 dBm\",\"name\":\"rssi\",\"unit\":\"dBm\",\"source\":\"DEVICE\",\"value\":\"-39\",\"date\":\"2013-12-30T16:03:08.224Z\"}",
+  "Timestamp" : "2013-12-30T16:03:08.986Z",
+  "SignatureVersion" : "0",
+  "Signature" : "FAKE_SIGNATURE",
+  "SigningCertURL" : "FAKE_SIGNING_CERT_URL",
+  "UnsubscribeURL" : "FAKE_UNSUBSCRIBE_URL"
+}

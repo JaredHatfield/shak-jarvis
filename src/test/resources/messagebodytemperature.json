@@ -1,0 +1,11 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "0fffffff-fffff-ffff-ffff-fffffffffff",
+  "TopicArn" : "arn:aws:sns:us-east-1:00000000000:sensors",
+  "Message" : "{\"auth\":\"foobar\",\"id\":\"1fffffff-fffff-ffff-ffff-fffffffffff\",\"deviceId\":\"2fffffff-fffff-ffff-ffff-fffffffffff\",\"hubId\":\"3fffffff-fffff-ffff-ffff-fffffffffff\",\"locationId\":\"4fffffff-fffff-ffff-ffff-fffffffffff\",\"description\":\"contactState: 0, accelerationState: 0, temp: 129, battery: 1B, rssi: 81, lqi: 255\",\"descriptionText\":\"Back Door was 55\\u00b0F\",\"name\":\"temperature\",\"unit\":\"F\",\"source\":\"DEVICE\",\"value\":\"55\",\"date\":\"2013-12-30T16:03:13.584Z\"}",
+  "Timestamp" : "2013-12-30T16:03:08.986Z",
+  "SignatureVersion" : "0",
+  "Signature" : "FAKE_SIGNATURE",
+  "SigningCertURL" : "FAKE_SIGNING_CERT_URL",
+  "UnsubscribeURL" : "FAKE_UNSUBSCRIBE_URL"
+}
