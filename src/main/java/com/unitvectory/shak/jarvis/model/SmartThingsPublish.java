@@ -1,5 +1,19 @@
 package com.unitvectory.shak.jarvis.model;
 
+import com.unitvectory.shak.jarvis.exception.SmartException;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartAcceleration;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartBattery;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartHumidity;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartIlluminance;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartLqi;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartPresence;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartRssi;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartTemperature;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartThreeAxis;
+
 /**
  * The SmartThings publish information.
  * 
@@ -95,6 +109,43 @@ public class SmartThingsPublish {
             this.source = publish.getData().get("source");
             this.unit = publish.getData().get("unit");
             this.value = publish.getData().get("value");
+        }
+    }
+
+    /**
+     * Builds a SmartEvent object based on the publish.
+     * 
+     * @return the SmartEvent
+     * @throws SmartException
+     */
+    public SmartEvent buildSmartEvent()
+            throws SmartException {
+        if (this.name == null) {
+            throw new SmartException("No name set");
+        } else if (this.name.equals("acceleration")) {
+            return new SmartAcceleration(this);
+        } else if (this.name.equals("battery")) {
+            return new SmartBattery(this);
+        } else if (this.name.equals("contact")) {
+            return new SmartContact(this);
+        } else if (this.name.equals("humidity")) {
+            return new SmartHumidity(this);
+        } else if (this.name.equals("illuminance")) {
+            return new SmartIlluminance(this);
+        } else if (this.name.equals("lqi")) {
+            return new SmartLqi(this);
+        } else if (this.name.equals("motion")) {
+            return new SmartMotion(this);
+        } else if (this.name.equals("presence")) {
+            return new SmartPresence(this);
+        } else if (this.name.equals("rssi")) {
+            return new SmartRssi(this);
+        } else if (this.name.equals("temperature")) {
+            return new SmartTemperature(this);
+        } else if (this.name.equals("threeAxis")) {
+            return new SmartThreeAxis(this);
+        } else {
+            throw new SmartException("Unknown name " + this.name);
         }
     }
 

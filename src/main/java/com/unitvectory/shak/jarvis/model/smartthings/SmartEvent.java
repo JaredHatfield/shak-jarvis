@@ -1,5 +1,12 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
+import org.apache.log4j.Logger;
+
 import com.unitvectory.shak.jarvis.exception.SmartException;
 
 /**
@@ -9,6 +16,11 @@ import com.unitvectory.shak.jarvis.exception.SmartException;
  * 
  */
 public abstract class SmartEvent {
+
+    /**
+     * The logger
+     */
+    private static Logger log = Logger.getLogger(SmartEvent.class);
 
     /**
      * the name
@@ -107,6 +119,62 @@ public abstract class SmartEvent {
      * @return the date
      */
     public String getDate() {
-        return date;
+        return this.date;
     }
+
+    /**
+     * Gets the timestamp
+     * 
+     * @return the timestamp
+     */
+    public Timestamp getTimestamp() {
+        try {
+            java.util.Date utilDate =
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                            .parse(this.date);
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            return new Timestamp(sqlDate.getTime());
+        } catch (Exception e) {
+            log.error("Unable to parse date " + this.date, e);
+            return null;
+        }
+    }
+
+    /**
+     * Gets the history query.
+     * 
+     * @return the history query
+     */
+    public abstract String getHistoryQuery();
+
+    /**
+     * Sets the history prepared statement parameters
+     * 
+     * @param stmt
+     *            the prepared statement
+     * @param device
+     *            the device
+     * @throws SQLException
+     */
+    public abstract void setHistoryParams(PreparedStatement stmt, int device)
+            throws SQLException;
+
+    /**
+     * Gets the recent query.
+     * 
+     * @return the recent query
+     */
+    public abstract String getRecentQuery();
+
+    /**
+     * Sets the recent prepared statement parameters
+     * 
+     * @param stmt
+     *            the prepared statement
+     * @param device
+     *            the device
+     * @throws SQLException
+     */
+    public abstract void setRecentParams(PreparedStatement stmt, int device)
+            throws SQLException;
 }

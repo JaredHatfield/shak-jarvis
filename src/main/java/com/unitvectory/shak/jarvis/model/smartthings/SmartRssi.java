@@ -1,5 +1,8 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import com.unitvectory.shak.jarvis.exception.SmartException;
 import com.unitvectory.shak.jarvis.model.SmartThingsPublish;
 
@@ -45,4 +48,46 @@ public class SmartRssi extends SmartEvent {
         return value;
     }
 
+    /**
+     * The history query.
+     */
+    private static final String HistoryQuery =
+            "INSERT INTO smart_rssi_event (device, eventid, value, occurred) VALUES (?,?,?,?)";
+
+    @Override
+    public String getHistoryQuery() {
+        return HistoryQuery;
+    }
+
+    @Override
+    public void setHistoryParams(PreparedStatement stmt, int device)
+            throws SQLException {
+        stmt.setInt(1, device);
+        stmt.setString(2, this.getEventId());
+        stmt.setDouble(3, this.getValue());
+        stmt.setTimestamp(4, this.getTimestamp());
+    }
+
+    /**
+     * The recent query.
+     */
+    private static final String RecentQuery =
+            "INSERT INTO smart_rssi_recent (device, eventid, value, occurred) "
+                    + "VALUES (?,?,?,?) "
+                    + "ON DUPLICATE KEY UPDATE eventid = VALUES(eventid), "
+                    + "value = VALUES(value), occurred = VALUES(occurred)";
+
+    @Override
+    public String getRecentQuery() {
+        return RecentQuery;
+    }
+
+    @Override
+    public void setRecentParams(PreparedStatement stmt, int device)
+            throws SQLException {
+        stmt.setInt(1, device);
+        stmt.setString(2, this.getEventId());
+        stmt.setDouble(3, this.getValue());
+        stmt.setTimestamp(4, this.getTimestamp());
+    }
 }
