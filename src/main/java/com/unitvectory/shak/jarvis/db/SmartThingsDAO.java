@@ -51,7 +51,12 @@ public class SmartThingsDAO {
         ResultSet rs = null;
         try {
             con = ds.getConnection();
-            stmt = con.prepareStatement(event.getRecentQuery());
+            String query = event.getRecentQuery();
+            if (query == null) {
+                return InsertResult.Success;
+            }
+
+            stmt = con.prepareStatement(query);
             event.setRecentParams(stmt, device);
             stmt.execute();
             return InsertResult.Success;
@@ -69,7 +74,12 @@ public class SmartThingsDAO {
         ResultSet rs = null;
         try {
             con = ds.getConnection();
-            stmt = con.prepareStatement(event.getHistoryQuery());
+            String query = event.getHistoryQuery();
+            if (query == null) {
+                return InsertResult.Success;
+            }
+
+            stmt = con.prepareStatement(query);
             event.setHistoryParams(stmt, device);
             stmt.execute();
             return InsertResult.Success;
