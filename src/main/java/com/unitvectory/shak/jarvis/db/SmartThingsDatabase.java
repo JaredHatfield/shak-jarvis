@@ -19,17 +19,13 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
  * @author Jared Hatfield
  * 
  */
-public class SmartThingsDatabase implements SmartThingsDAO {
+public class SmartThingsDatabase extends AbstractDatabase implements
+        SmartThingsDAO {
 
     /**
      * the log
      */
     private static Logger log = Logger.getLogger(SmartThingsDatabase.class);
-
-    /**
-     * the basic data source
-     */
-    private BasicDataSource ds;
 
     /**
      * Creates a new instance of the SmartThingsDatabase
@@ -38,7 +34,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
      *            the basic data source
      */
     public SmartThingsDatabase(BasicDataSource ds) {
-        this.ds = ds;
+        super(ds);
     }
 
     /**
@@ -59,7 +55,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            con = ds.getConnection();
+            con = this.getConnection();
             stmt = con.prepareStatement(DeviceDetailsQuery);
             stmt.setString(1, event.getDeviceId());
             stmt.setString(2, event.getLocationId());
@@ -123,7 +119,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            con = ds.getConnection();
+            con = this.getConnection();
             String query = event.getRecentQuery();
             if (query == null) {
                 return InsertResult.Success;
@@ -155,7 +151,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            con = ds.getConnection();
+            con = this.getConnection();
             String query = event.getHistoryQuery();
             if (query == null) {
                 return InsertResult.Success;
@@ -198,7 +194,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            con = ds.getConnection();
+            con = this.getConnection();
             stmt = con.prepareStatement(GetSmartEventDevicePidQuery);
             stmt.setString(1, hubId);
             stmt.setString(2, locationId);
@@ -241,7 +237,7 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            con = ds.getConnection();
+            con = this.getConnection();
             stmt =
                     con.prepareStatement(InsertSmartEventDeviceQuery,
                             Statement.RETURN_GENERATED_KEYS);
@@ -264,36 +260,4 @@ public class SmartThingsDatabase implements SmartThingsDAO {
         }
     }
 
-    /**
-     * Closes everything.
-     * 
-     * @param con
-     *            the connection
-     * @param stmt
-     *            the statement
-     * @param rs
-     *            the result set
-     */
-    private void closeEverything(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-        }
-
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-        }
-
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-            }
-        }
-    }
 }
