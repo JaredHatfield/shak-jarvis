@@ -70,13 +70,48 @@ public class HomeEventProcessor {
             return false;
         }
 
+        String type = request.getData().get("type");
+        if (type == null) {
+            return false;
+        }
+
+        List<ActionNotification> notifications =
+                new ArrayList<ActionNotification>();
+
+        if (type.equals("smartthings")) {
+            List<ActionNotification> smartNotifications =
+                    this.processSmartEvent(request);
+            if (smartNotifications == null) {
+                return false;
+            }
+
+            this.append(notifications, smartNotifications);
+        }
+
+        // Lots of events
+        for (ActionNotification notification : notifications) {
+            log.info(notification);
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the list of events given a smart event.
+     * 
+     * @param request
+     *            the request
+     * @return the list of notifications
+     */
+    private List<ActionNotification> processSmartEvent(
+            JsonPublishRequest request) {
         SmartThingsPublish smart = new SmartThingsPublish(request);
         SmartEvent event = null;
         try {
             event = smart.buildSmartEvent();
         } catch (SmartException e) {
             log.error("Failed to parse SmartPublish request", e);
-            return false;
+            return null;
         }
 
         // Insert the event into the database
@@ -85,10 +120,10 @@ public class HomeEventProcessor {
         switch (insertResult) {
             case Duplicate:
                 // A duplicate event needs no more processing
-                return true;
+                return null;
             case Error:
                 // An error should not be processed
-                return false;
+                return null;
             case Success:
                 // Just keep going...
                 break;
@@ -110,12 +145,7 @@ public class HomeEventProcessor {
                     this.contactAction.getActions(cache, event));
         }
 
-        // Lots of events
-        for (ActionNotification notification : notifications) {
-            log.info(notification);
-        }
-
-        return true;
+        return notifications;
     }
 
     /**
