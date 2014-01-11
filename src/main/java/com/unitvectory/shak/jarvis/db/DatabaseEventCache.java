@@ -21,6 +21,16 @@ public class DatabaseEventCache {
     private SmartThingsDAO st;
 
     /**
+     * the personal location DAO.
+     */
+    private PersonLocationDAO pl;
+
+    /**
+     * the location token name
+     */
+    private Map<String, String> locationTokenName;
+
+    /**
      * the device details
      */
     private Map<String, SmartThingsDeviceDetails> deviceDetails;
@@ -29,11 +39,34 @@ public class DatabaseEventCache {
      * Creates a new instance of the DatabaseEventCache class.
      * 
      * @param smartthings
-     *            the smart things dao
+     *            the smart things DAO
+     * @param personlocation
+     *            the person location DAO
      */
-    public DatabaseEventCache(SmartThingsDAO smartthings) {
+    public DatabaseEventCache(SmartThingsDAO smartthings,
+            PersonLocationDAO personlocation) {
         this.st = smartthings;
+        this.pl = personlocation;
+        this.locationTokenName = new HashMap<String, String>();
         this.deviceDetails = new HashMap<String, SmartThingsDeviceDetails>();
+    }
+
+    /**
+     * Gets the person name.
+     * 
+     * @param token
+     *            the token
+     * @return the name
+     */
+    public String getPersonName(String token) {
+        String name = this.locationTokenName.get(token);
+        if (name != null) {
+            return name;
+        }
+
+        name = this.pl.getPersonName(token);
+        this.locationTokenName.put(token, name);
+        return name;
     }
 
     /**
@@ -64,6 +97,7 @@ public class DatabaseEventCache {
      * Clears the cache
      */
     public void clear() {
+        this.locationTokenName.clear();
         this.deviceDetails.clear();
     }
 }

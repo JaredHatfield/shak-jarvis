@@ -6,13 +6,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.unitvectory.shak.jarvis.action.ActionNotification;
+import com.unitvectory.shak.jarvis.action.PersonLocationAction;
 import com.unitvectory.shak.jarvis.action.SmartContactAction;
 import com.unitvectory.shak.jarvis.action.SmartMotionAction;
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.InsertResult;
+import com.unitvectory.shak.jarvis.db.PersonLocationDAO;
 import com.unitvectory.shak.jarvis.db.SmartThingsDAO;
 import com.unitvectory.shak.jarvis.exception.SmartException;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
+import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 import com.unitvectory.shak.jarvis.model.SmartThingsPublish;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
@@ -37,6 +40,16 @@ public class HomeEventProcessor {
     private SmartThingsDAO st;
 
     /**
+     * the person location DAO
+     */
+    private PersonLocationDAO pl;
+
+    /**
+     * the person location action
+     */
+    private PersonLocationAction locationAction;
+
+    /**
      * the smart contact action
      */
     private SmartContactAction contactAction;
@@ -51,11 +64,15 @@ public class HomeEventProcessor {
      * 
      * @param st
      *            the smart event DAO
+     * @param pl
+     *            the person location dao
      */
-    public HomeEventProcessor(SmartThingsDAO st) {
+    public HomeEventProcessor(SmartThingsDAO st, PersonLocationDAO pl) {
         this.st = st;
-        this.contactAction = new SmartContactAction(st);
-        this.motionAction = new SmartMotionAction(st);
+        this.pl = pl;
+        this.contactAction = new SmartContactAction();
+        this.motionAction = new SmartMotionAction();
+        this.locationAction = new PersonLocationAction();
     }
 
     /**
@@ -86,6 +103,16 @@ public class HomeEventProcessor {
             }
 
             this.append(notifications, smartNotifications);
+        } else if (type.equals("location")) {
+            List<ActionNotification> locationNotifications =
+                    this.processLocationEvent(request);
+            if (locationNotifications == null) {
+                return false;
+            }
+
+            this.append(notifications, locationNotifications);
+        } else {
+            log.info("Unknown event type " + type);
         }
 
         // Lots of events
@@ -94,6 +121,44 @@ public class HomeEventProcessor {
         }
 
         return true;
+    }
+
+    /**
+     * Get the list of events given a location.
+     * 
+     * @param request
+     *            the request
+     * @return the list of notification
+     */
+    private List<ActionNotification> processLocationEvent(
+            JsonPublishRequest request) {
+        PersonLocationPublish location = new PersonLocationPublish(request);
+
+        InsertResult insertResult = this.pl.insertLocation(location);
+        log.info(insertResult + " - " + location);
+        switch (insertResult) {
+            case Duplicate:
+                // A duplicate event needs no more processing
+                return null;
+            case Error:
+                // An error should not be processed
+                return null;
+            case Success:
+                // Just keep going...
+                break;
+            default:
+                break;
+        }
+
+        DatabaseEventCache cache = new DatabaseEventCache(this.st, this.pl);
+
+        List<ActionNotification> notifications =
+                new ArrayList<ActionNotification>();
+        this.append(notifications,
+                this.locationAction.getActions(cache, location));
+
+        // TODO: Process the location
+        return notifications;
     }
 
     /**
@@ -132,7 +197,7 @@ public class HomeEventProcessor {
         }
 
         // The cache
-        DatabaseEventCache cache = new DatabaseEventCache(this.st);
+        DatabaseEventCache cache = new DatabaseEventCache(this.st, this.pl);
 
         // Get the list of actions
         List<ActionNotification> notifications =
@@ -156,6 +221,12 @@ public class HomeEventProcessor {
      */
     private void append(List<ActionNotification> master,
             List<ActionNotification> children) {
+        if (master == null) {
+            return;
+        } else if (children == null) {
+            return;
+        }
+
         for (ActionNotification child : children) {
             master.add(child);
         }

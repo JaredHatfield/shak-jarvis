@@ -1,5 +1,7 @@
 package com.unitvectory.shak.jarvis.db;
 
+import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
+
 /**
  * The person location DAO
  * 
@@ -8,4 +10,7 @@ package com.unitvectory.shak.jarvis.db;
  */
 public interface PersonLocationDAO {
 
+    String getPersonName(String token);
+
+    InsertResult insertLocation(PersonLocationPublish publish);
 }

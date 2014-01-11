@@ -3,7 +3,6 @@ package com.unitvectory.shak.jarvis.action;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
-import com.unitvectory.shak.jarvis.db.SmartThingsDAO;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 
 /**
@@ -15,27 +14,10 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 public abstract class SmartAction {
 
     /**
-     * the smart things dao
-     */
-    private SmartThingsDAO st;
-
-    /**
      * Creates a new instance of the SmartAction class.
      * 
-     * @param st
-     *            the smart things dao
      */
-    public SmartAction(SmartThingsDAO st) {
-        this.st = st;
-    }
-
-    /**
-     * Gets the smart things dao
-     * 
-     * @return the smart things dao
-     */
-    protected SmartThingsDAO getSmartThingsDAO() {
-        return this.st;
+    public SmartAction() {
     }
 
     /**
