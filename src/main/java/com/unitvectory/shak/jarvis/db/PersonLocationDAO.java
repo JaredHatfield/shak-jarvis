@@ -10,7 +10,21 @@ import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
  */
 public interface PersonLocationDAO {
 
+    /**
+     * Gets a person's name.
+     * 
+     * @param token
+     *            the token
+     * @return the person name
+     */
     String getPersonName(String token);
 
+    /**
+     * Inserts a location.
+     * 
+     * @param publish
+     *            the public
+     * @return the insert result
+     */
     InsertResult insertLocation(PersonLocationPublish publish);
 }
