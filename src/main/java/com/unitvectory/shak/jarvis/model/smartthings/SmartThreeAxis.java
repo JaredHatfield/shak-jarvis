@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.unitvectory.shak.jarvis.exception.SmartException;
@@ -28,6 +29,36 @@ public class SmartThreeAxis extends SmartEvent {
      * the valZ
      */
     private double valZ;
+
+    /**
+     * Creates a new instance of the SmartRssi class.
+     * 
+     * @param hubId
+     *            the hubId
+     * @param locationId
+     *            the locationId
+     * @param deviceId
+     *            the deviceId
+     * @param eventId
+     *            the eventId
+     * @param date
+     *            the date
+     * @param valX
+     *            the valX
+     * @param valY
+     *            the valY
+     * @param valZ
+     *            the valZ
+     * @throws SmartException
+     */
+    public SmartThreeAxis(String hubId, String locationId, String deviceId,
+            String eventId, String date, double valX, double valY, double valZ)
+            throws SmartException {
+        super("threeAxis", hubId, locationId, deviceId, eventId, date);
+        this.valX = valX;
+        this.valY = valY;
+        this.valZ = valZ;
+    }
 
     /**
      * Creates a new instance of the SMartThreeAxis class
@@ -126,5 +157,35 @@ public class SmartThreeAxis extends SmartEvent {
         stmt.setDouble(4, this.getValY());
         stmt.setDouble(5, this.getValZ());
         stmt.setTimestamp(6, this.getTimestamp());
+    }
+
+    /**
+     * the previous query
+     */
+    private static final String PreviousQuery = "SELECT d.hubid, "
+            + "d.locationid, d.deviceid, e.eventid, e.occurred, "
+            + "e.valX, e.valY, e.valZ " + "FROM smart_threeaxis_event e "
+            + "JOIN smart_device d ON e.device = d.pid "
+            + "WHERE d.hubid = ? AND d.locationid = ? AND d.deviceid = ? "
+            + "ORDER BY e.occurred DESC LIMIT 1, 1";
+
+    @Override
+    public String getPreviousQuery() {
+        return PreviousQuery;
+    }
+
+    @Override
+    public SmartEvent getPreviousObject(ResultSet rs)
+            throws SQLException, SmartException {
+        String hubId = rs.getString("hubid");
+        String locationId = rs.getString("locationid");
+        String deviceId = rs.getString("deviceid");
+        String eventId = rs.getString("eventid");
+        String occurred = rs.getString("occurred");
+        double valX = rs.getDouble("valX");
+        double valY = rs.getDouble("valY");
+        double valZ = rs.getDouble("valZ");
+        return new SmartThreeAxis(hubId, locationId, deviceId, eventId,
+                occurred, valX, valY, valZ);
     }
 }

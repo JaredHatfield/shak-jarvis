@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
+import com.unitvectory.shak.jarvis.exception.SmartException;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 
 /**
@@ -255,6 +256,34 @@ public class SmartThingsDatabase extends AbstractDatabase implements
         } catch (SQLException e) {
             log.error("Unable to insert SmartEventDevice", e);
             return -1;
+        } finally {
+            this.closeEverything(con, stmt, rs);
+        }
+    }
+
+    public SmartEvent getPreviousEvent(SmartEvent event)
+            throws SQLException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            con = this.getConnection();
+            stmt = con.prepareStatement(event.getPreviousQuery());
+            stmt.setString(1, event.getHubId());
+            stmt.setString(2, event.getLocationId());
+            stmt.setString(3, event.getDeviceId());
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                return event.getPreviousObject(rs);
+            }
+
+            return null;
+        } catch (SQLException e) {
+            log.error("Unable to get previous event", e);
+            return null;
+        } catch (SmartException e) {
+            log.error("Unable to get previous event", e);
+            return null;
         } finally {
             this.closeEverything(con, stmt, rs);
         }

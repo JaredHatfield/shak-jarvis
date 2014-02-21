@@ -32,4 +32,15 @@ public interface SmartThingsDAO {
      */
     SmartThingsDeviceDetails getDeviceDetails(SmartEvent event)
             throws SQLException;
+
+    /**
+     * Gets the previous smart event.
+     * 
+     * @param event
+     *            the current event
+     * @return the previous event
+     * @throws SQLException
+     */
+    SmartEvent getPreviousEvent(SmartEvent event)
+            throws SQLException;
 }

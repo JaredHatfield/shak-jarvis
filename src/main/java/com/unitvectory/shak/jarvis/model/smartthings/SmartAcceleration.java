@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.unitvectory.shak.jarvis.exception.SmartException;
@@ -18,6 +19,29 @@ public class SmartAcceleration extends SmartEvent {
      * the status
      */
     private char status;
+
+    /**
+     * Creates a new instance of the SmartAcceleration class.
+     * 
+     * @param hubId
+     *            the hubId
+     * @param locationId
+     *            the locationId
+     * @param deviceId
+     *            the deviceId
+     * @param eventId
+     *            the eventId
+     * @param date
+     *            the date
+     * @param status
+     *            the status
+     * @throws SmartException
+     */
+    public SmartAcceleration(String hubId, String locationId, String deviceId,
+            String eventId, String date, char status) throws SmartException {
+        super("acceleration", hubId, locationId, deviceId, eventId, date);
+        this.status = status;
+    }
 
     /**
      * Creates a new instance of the SmartAcceleration class.
@@ -89,5 +113,33 @@ public class SmartAcceleration extends SmartEvent {
         stmt.setString(2, this.getEventId());
         stmt.setString(3, this.getStatus() + "");
         stmt.setTimestamp(4, this.getTimestamp());
+    }
+
+    /**
+     * the previous query
+     */
+    private static final String PreviousQuery = "SELECT d.hubid, "
+            + "d.locationid, d.deviceid, e.eventid, e.occurred, e.status "
+            + "FROM smart_acceleration_event e "
+            + "JOIN smart_device d ON e.device = d.pid "
+            + "WHERE d.hubid = ? AND d.locationid = ? AND d.deviceid = ? "
+            + "ORDER BY e.occurred DESC LIMIT 1, 1";
+
+    @Override
+    public String getPreviousQuery() {
+        return PreviousQuery;
+    }
+
+    @Override
+    public SmartEvent getPreviousObject(ResultSet rs)
+            throws SQLException, SmartException {
+        String hubId = rs.getString("hubid");
+        String locationId = rs.getString("locationid");
+        String deviceId = rs.getString("deviceid");
+        String eventId = rs.getString("eventid");
+        String occurred = rs.getString("occurred");
+        char status = rs.getString("status").charAt(0);
+        return new SmartAcceleration(hubId, locationId, deviceId, eventId,
+                occurred, status);
     }
 }

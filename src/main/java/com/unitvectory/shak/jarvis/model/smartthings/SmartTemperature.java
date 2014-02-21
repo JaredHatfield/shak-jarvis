@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.unitvectory.shak.jarvis.exception.SmartException;
@@ -23,6 +24,33 @@ public class SmartTemperature extends SmartEvent {
      * the unit
      */
     private char unit;
+
+    /**
+     * Creates a new instance of the SmartTemperature class.
+     * 
+     * @param hubId
+     *            the hubId
+     * @param locationId
+     *            the locationId
+     * @param deviceId
+     *            the deviceId
+     * @param eventId
+     *            the eventId
+     * @param date
+     *            the date
+     * @param value
+     *            the value
+     * @param unit
+     *            the unit
+     * @throws SmartException
+     */
+    public SmartTemperature(String hubId, String locationId, String deviceId,
+            String eventId, String date, double value, char unit)
+            throws SmartException {
+        super("temperature", hubId, locationId, deviceId, eventId, date);
+        this.value = value;
+        this.unit = unit;
+    }
 
     /**
      * Creates a new instance of the SmartTemperature class.
@@ -104,5 +132,34 @@ public class SmartTemperature extends SmartEvent {
         stmt.setDouble(3, this.getValue());
         stmt.setString(4, this.getUnit() + "");
         stmt.setTimestamp(5, this.getTimestamp());
+    }
+
+    /**
+     * the previous query
+     */
+    private static final String PreviousQuery = "SELECT d.hubid, "
+            + "d.locationid, d.deviceid, e.eventid, e.occurred, "
+            + "e.value, e.unit " + "FROM smart_temperature_event e "
+            + "JOIN smart_device d ON e.device = d.pid "
+            + "WHERE d.hubid = ? AND d.locationid = ? AND d.deviceid = ? "
+            + "ORDER BY e.occurred DESC LIMIT 1, 1";
+
+    @Override
+    public String getPreviousQuery() {
+        return PreviousQuery;
+    }
+
+    @Override
+    public SmartEvent getPreviousObject(ResultSet rs)
+            throws SQLException, SmartException {
+        String hubId = rs.getString("hubid");
+        String locationId = rs.getString("locationid");
+        String deviceId = rs.getString("deviceid");
+        String eventId = rs.getString("eventid");
+        String occurred = rs.getString("occurred");
+        double value = rs.getDouble("value");
+        char unit = rs.getString("unit").charAt(0);
+        return new SmartTemperature(hubId, locationId, deviceId, eventId,
+                occurred, value, unit);
     }
 }

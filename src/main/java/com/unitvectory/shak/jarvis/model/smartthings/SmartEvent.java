@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -177,4 +178,23 @@ public abstract class SmartEvent {
      */
     public abstract void setRecentParams(PreparedStatement stmt, int device)
             throws SQLException;
+
+    /**
+     * Gets the previous query.
+     * 
+     * @return the previous query
+     */
+    public abstract String getPreviousQuery();
+
+    /**
+     * Gets the previous event object.
+     * 
+     * @param rs
+     *            the result set
+     * @return the event object
+     * @throws SQLException
+     * @throws SmartException
+     */
+    public abstract SmartEvent getPreviousObject(ResultSet rs)
+            throws SQLException, SmartException;
 }
