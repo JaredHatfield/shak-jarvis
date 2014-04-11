@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 
+import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -38,9 +39,10 @@ public class PersonLocationDatabase extends AbstractDatabase implements
      * the person name query
      */
     private static final String PersonNameQuery =
-            "SELECT firstName FROM person WHERE token = ? LIMIT 1 ";
+            "SELECT firstName, lastName, home "
+                    + "FROM person WHERE token = ? LIMIT 1 ";
 
-    public String getPersonName(String token) {
+    public PersonLocationDetails getPerson(String token) {
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -50,13 +52,16 @@ public class PersonLocationDatabase extends AbstractDatabase implements
             stmt.setString(1, token);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                return rs.getString("firstName");
+                String firstName = rs.getString("firstName");
+                String lastName = rs.getString("lastName");
+                int home = rs.getInt("home");
+                return new PersonLocationDetails(firstName, lastName, home);
             }
 
-            return "Unknown";
+            return null;
         } catch (SQLException e) {
             log.error("Unable to get person id", e);
-            return "Unknown";
+            return null;
         } finally {
             this.closeEverything(con, stmt, rs);
         }

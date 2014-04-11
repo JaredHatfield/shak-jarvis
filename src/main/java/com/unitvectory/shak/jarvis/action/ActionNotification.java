@@ -19,16 +19,33 @@ public class ActionNotification {
     private String notification;
 
     /**
+     * the speak flag
+     */
+    private boolean speak;
+
+    /**
+     * the home id
+     */
+    private int home;
+
+    /**
      * Creates a new instance of the ActionNotification class.
      * 
      * @param event
      *            the event
      * @param notification
      *            the notification
+     * @param speak
+     *            the speak flag
+     * @param home
+     *            the home id
      */
-    public ActionNotification(String event, String notification) {
+    public ActionNotification(String event, String notification, boolean speak,
+            int home) {
         this.event = event;
         this.notification = notification;
+        this.speak = speak;
+        this.home = home;
     }
 
     /**
@@ -45,6 +62,28 @@ public class ActionNotification {
         return notification;
     }
 
+    /**
+     * @return the speak
+     */
+    public boolean isSpeak() {
+        return speak;
+    }
+
+    /**
+     * @param speak
+     *            the speak to set
+     */
+    public void setSpeak(boolean speak) {
+        this.speak = speak;
+    }
+
+    /**
+     * @return the home
+     */
+    public int getHome() {
+        return home;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -52,7 +91,8 @@ public class ActionNotification {
      */
     @Override
     public String toString() {
-        return "Event " + this.event + ": " + this.notification;
+        return "ActionNotification [event=" + event + ", notification="
+                + notification + ", speak=" + speak + ", home=" + home + "]";
     }
 
 }

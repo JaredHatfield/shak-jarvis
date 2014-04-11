@@ -43,7 +43,7 @@ public class SmartMotionAction extends SmartAction {
 
         if (motion.getStatus() == 'A') {
             notifications.add(new ActionNotification("MOTION", "Motion in "
-                    + details.getName()));
+                    + details.getName(), false, details.getHome()));
         }
 
         return notifications;

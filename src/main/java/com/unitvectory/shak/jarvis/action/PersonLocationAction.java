@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -34,10 +35,13 @@ public class PersonLocationAction {
         List<ActionNotification> notifications =
                 new ArrayList<ActionNotification>();
 
-        String name = cache.getPersonName(event.getToken());
+        PersonLocationDetails person = cache.getPerson(event.getToken());
+        if (person == null) {
+            return notifications;
+        }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(name);
+        sb.append(person.getFirstName());
         if (event.getStatus() == 'P') {
             sb.append(" is arriving ");
         } else if (event.getStatus() == 'N') {
@@ -47,7 +51,8 @@ public class PersonLocationAction {
         }
 
         sb.append(event.getLocation());
-        notifications.add(new ActionNotification("LOCATION", sb.toString()));
+        notifications.add(new ActionNotification("LOCATION", sb.toString(),
+                true, person.getHome()));
 
         return notifications;
     }

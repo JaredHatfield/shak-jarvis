@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 
@@ -16,19 +17,14 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 public class DatabaseEventCache {
 
     /**
-     * the smart things dao
+     * the database
      */
-    private SmartThingsDAO st;
+    private ShakDatabase database;
 
     /**
-     * the personal location DAO.
+     * the location token person
      */
-    private PersonLocationDAO pl;
-
-    /**
-     * the location token name
-     */
-    private Map<String, String> locationTokenName;
+    private Map<String, PersonLocationDetails> locationTokenPerson;
 
     /**
      * the device details
@@ -38,16 +34,12 @@ public class DatabaseEventCache {
     /**
      * Creates a new instance of the DatabaseEventCache class.
      * 
-     * @param smartthings
-     *            the smart things DAO
-     * @param personlocation
-     *            the person location DAO
+     * @param database
+     *            the database
      */
-    public DatabaseEventCache(SmartThingsDAO smartthings,
-            PersonLocationDAO personlocation) {
-        this.st = smartthings;
-        this.pl = personlocation;
-        this.locationTokenName = new HashMap<String, String>();
+    public DatabaseEventCache(ShakDatabase database) {
+        this.database = database;
+        this.locationTokenPerson = new HashMap<String, PersonLocationDetails>();
         this.deviceDetails = new HashMap<String, SmartThingsDeviceDetails>();
     }
 
@@ -56,16 +48,16 @@ public class DatabaseEventCache {
      * 
      * @param token
      *            the token
-     * @return the name
+     * @return the person
      */
-    public String getPersonName(String token) {
-        String name = this.locationTokenName.get(token);
+    public PersonLocationDetails getPerson(String token) {
+        PersonLocationDetails name = this.locationTokenPerson.get(token);
         if (name != null) {
             return name;
         }
 
-        name = this.pl.getPersonName(token);
-        this.locationTokenName.put(token, name);
+        name = this.database.pl().getPerson(token);
+        this.locationTokenPerson.put(token, name);
         return name;
     }
 
@@ -85,7 +77,7 @@ public class DatabaseEventCache {
 
         SmartThingsDeviceDetails details = null;
         try {
-            details = this.st.getDeviceDetails(event);
+            details = this.database.st().getDeviceDetails(event);
         } catch (SQLException e) {
         }
 
@@ -97,7 +89,7 @@ public class DatabaseEventCache {
      * Clears the cache
      */
     public void clear() {
-        this.locationTokenName.clear();
+        this.locationTokenPerson.clear();
         this.deviceDetails.clear();
     }
 }

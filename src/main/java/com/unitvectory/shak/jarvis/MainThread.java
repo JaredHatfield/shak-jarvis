@@ -2,7 +2,6 @@ package com.unitvectory.shak.jarvis;
 
 import java.util.List;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -16,10 +15,7 @@ import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
-import com.unitvectory.shak.jarvis.db.PersonLocationDAO;
-import com.unitvectory.shak.jarvis.db.PersonLocationDatabase;
-import com.unitvectory.shak.jarvis.db.SmartThingsDAO;
-import com.unitvectory.shak.jarvis.db.SmartThingsDatabase;
+import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
 
 /**
@@ -51,11 +47,6 @@ public class MainThread extends Thread {
     private AppConfig config;
 
     /**
-     * the data source
-     */
-    private BasicDataSource dataSource;
-
-    /**
      * the event processor
      */
     private HomeEventProcessor eventProcessor;
@@ -78,20 +69,10 @@ public class MainThread extends Thread {
             this.running = true;
         }
 
-        // Connect to the database
-        this.dataSource = new BasicDataSource();
-        this.dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        this.dataSource.setValidationQuery("SELECT 1");
-        this.dataSource.setUsername(this.config.getDbUser());
-        this.dataSource.setPassword(this.config.getDbPassword());
-        this.dataSource.setUrl(this.config.getDbUrl());
-        this.dataSource.setInitialSize(1);
-
-        SmartThingsDAO st = new SmartThingsDatabase(this.dataSource);
-        PersonLocationDAO pl = new PersonLocationDatabase(this.dataSource);
+        ShakDatabase database = new ShakDatabase(config);
 
         // Make the event processor
-        this.eventProcessor = new HomeEventProcessor(st, pl);
+        this.eventProcessor = new HomeEventProcessor(database);
 
         // Make the SQS Client
         AmazonSQSAsyncClient asyncSQS =

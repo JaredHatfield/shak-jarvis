@@ -11,8 +11,7 @@ import com.unitvectory.shak.jarvis.action.SmartContactAction;
 import com.unitvectory.shak.jarvis.action.SmartMotionAction;
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.InsertResult;
-import com.unitvectory.shak.jarvis.db.PersonLocationDAO;
-import com.unitvectory.shak.jarvis.db.SmartThingsDAO;
+import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.exception.SmartException;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
@@ -20,6 +19,7 @@ import com.unitvectory.shak.jarvis.model.SmartThingsPublish;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
+import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechClient;
 
 /**
  * The home event processor
@@ -35,14 +35,9 @@ public class HomeEventProcessor {
     private static Logger log = Logger.getLogger(HomeEventProcessor.class);
 
     /**
-     * the smart things DAO
+     * the database
      */
-    private SmartThingsDAO st;
-
-    /**
-     * the person location DAO
-     */
-    private PersonLocationDAO pl;
+    private ShakDatabase database;
 
     /**
      * the person location action
@@ -60,19 +55,22 @@ public class HomeEventProcessor {
     private SmartMotionAction motionAction;
 
     /**
+     * the push to speech client
+     */
+    private PushToSpeechClient pushToSpeechClient;
+
+    /**
      * Creates a new instance of the HomeEventProcessor class.
      * 
-     * @param st
-     *            the smart event DAO
-     * @param pl
-     *            the person location dao
+     * @param database
+     *            the database
      */
-    public HomeEventProcessor(SmartThingsDAO st, PersonLocationDAO pl) {
-        this.st = st;
-        this.pl = pl;
+    public HomeEventProcessor(ShakDatabase database) {
+        this.database = database;
         this.contactAction = new SmartContactAction();
         this.motionAction = new SmartMotionAction();
         this.locationAction = new PersonLocationAction();
+        this.pushToSpeechClient = new PushToSpeechClient();
     }
 
     /**
@@ -118,6 +116,18 @@ public class HomeEventProcessor {
         // Lots of events
         for (ActionNotification notification : notifications) {
             log.info(notification);
+
+            List<String> deviceIds =
+                    this.database.pts()
+                            .getPushDeviceIds(notification.getHome());
+            if (deviceIds == null) {
+                continue;
+            }
+
+            for (String deviceid : deviceIds) {
+                this.pushToSpeechClient.speak(deviceid,
+                        notification.getNotification());
+            }
         }
 
         return true;
@@ -134,7 +144,7 @@ public class HomeEventProcessor {
             JsonPublishRequest request) {
         PersonLocationPublish location = new PersonLocationPublish(request);
 
-        InsertResult insertResult = this.pl.insertLocation(location);
+        InsertResult insertResult = this.database.pl().insertLocation(location);
         log.info(insertResult + " - " + location);
         switch (insertResult) {
             case Duplicate:
@@ -150,7 +160,7 @@ public class HomeEventProcessor {
                 break;
         }
 
-        DatabaseEventCache cache = new DatabaseEventCache(this.st, this.pl);
+        DatabaseEventCache cache = new DatabaseEventCache(this.database);
 
         List<ActionNotification> notifications =
                 new ArrayList<ActionNotification>();
@@ -180,7 +190,7 @@ public class HomeEventProcessor {
         }
 
         // Insert the event into the database
-        InsertResult insertResult = this.st.insertSmartEvent(event);
+        InsertResult insertResult = this.database.st().insertSmartEvent(event);
         log.info(insertResult + " - " + event.getName());
         switch (insertResult) {
             case Duplicate:
@@ -197,7 +207,7 @@ public class HomeEventProcessor {
         }
 
         // The cache
-        DatabaseEventCache cache = new DatabaseEventCache(this.st, this.pl);
+        DatabaseEventCache cache = new DatabaseEventCache(this.database);
 
         // Get the list of actions
         List<ActionNotification> notifications =

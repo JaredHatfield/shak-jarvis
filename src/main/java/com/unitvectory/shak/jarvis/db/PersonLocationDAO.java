@@ -1,5 +1,6 @@
 package com.unitvectory.shak.jarvis.db;
 
+import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -15,9 +16,9 @@ public interface PersonLocationDAO {
      * 
      * @param token
      *            the token
-     * @return the person name
+     * @return the person details
      */
-    String getPersonName(String token);
+    PersonLocationDetails getPerson(String token);
 
     /**
      * Inserts a location.
