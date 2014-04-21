@@ -47,6 +47,11 @@ public class MainThread extends Thread {
     private AppConfig config;
 
     /**
+     * the database.
+     */
+    private ShakDatabase database;
+
+    /**
      * the event processor
      */
     private HomeEventProcessor eventProcessor;
@@ -69,10 +74,10 @@ public class MainThread extends Thread {
             this.running = true;
         }
 
-        ShakDatabase database = new ShakDatabase(config);
+        this.database = new ShakDatabase(config);
 
         // Make the event processor
-        this.eventProcessor = new HomeEventProcessor(database);
+        this.eventProcessor = new HomeEventProcessor(this.database);
 
         // Make the SQS Client
         AmazonSQSAsyncClient asyncSQS =
@@ -91,6 +96,24 @@ public class MainThread extends Thread {
         boolean runningThread = true;
         log.info("Starting thread.");
         while (runningThread) {
+
+            // Make sure we can connect to the database
+            if (!this.database.isConnected()) {
+                try {
+                    log.info("Database not connected... waiting for 10 seconds...");
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e) {
+                    // Safe to ignore
+                }
+
+                // Decide if to keep running
+                synchronized (this) {
+                    runningThread = this.running;
+                }
+
+                // Keep going...
+                continue;
+            }
 
             // Receive messages from the queue
             int count = 1;

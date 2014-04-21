@@ -1,5 +1,8 @@
 package com.unitvectory.shak.jarvis.db;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.unitvectory.shak.jarvis.AppConfig;
@@ -73,6 +76,33 @@ public class ShakDatabase {
      */
     public PushToSpeechDAO pts() {
         return pts;
+    }
+
+    /**
+     * Tests if the database is still connected.
+     * 
+     * @return true if connected; otherwise false
+     */
+    public boolean isConnected() {
+        Connection connection = null;
+        try {
+            connection = this.dataSource.getConnection();
+            if (connection == null) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    // Safe to ignore
+                }
+            }
+        }
     }
 
 }
