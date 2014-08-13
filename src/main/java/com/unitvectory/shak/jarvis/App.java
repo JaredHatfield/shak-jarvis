@@ -101,7 +101,9 @@ public class App implements Daemon {
 
     public void init(DaemonContext arg0)
             throws DaemonInitException, Exception {
-        // TODO: Load the config for the daemon
+        Serializer serializer = new Persister();
+        String configPath = "/etc/jarvis-shak/config.xml";
+        config = serializer.read(AppConfig.class, new File(configPath));
     }
 
     public void start()
