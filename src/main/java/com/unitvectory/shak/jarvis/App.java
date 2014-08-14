@@ -102,7 +102,7 @@ public class App implements Daemon {
     public void init(DaemonContext arg0)
             throws DaemonInitException, Exception {
         Serializer serializer = new Persister();
-        String configPath = "/etc/jarvis-shak/config.xml";
+        String configPath = "/etc/shak-jarvis/config.xml";
         config = serializer.read(AppConfig.class, new File(configPath));
     }
 
