@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -34,12 +35,12 @@ public class MainThread extends Thread {
     /**
      * the running flag.
      */
-    private boolean running;
+    private AtomicBoolean running;
 
     /**
      * the done flag
      */
-    private boolean done;
+    private AtomicBoolean done;
 
     /**
      * The app config.
@@ -69,10 +70,8 @@ public class MainThread extends Thread {
      */
     public MainThread(AppConfig config) {
         this.config = config;
-        this.done = false;
-        synchronized (this) {
-            this.running = true;
-        }
+        this.done = new AtomicBoolean(false);
+        this.running = new AtomicBoolean(true);
 
         this.database = new ShakDatabase(config);
 
@@ -93,9 +92,8 @@ public class MainThread extends Thread {
 
     @Override
     public void run() {
-        boolean runningThread = true;
         log.info("Starting thread.");
-        while (runningThread) {
+        while (this.running.get()) {
 
             // Make sure we can connect to the database
             if (!this.database.isConnected()) {
@@ -104,11 +102,6 @@ public class MainThread extends Thread {
                     Thread.sleep(10 * 1000);
                 } catch (InterruptedException e) {
                     // Safe to ignore
-                }
-
-                // Decide if to keep running
-                synchronized (this) {
-                    runningThread = this.running;
                 }
 
                 // Keep going...
@@ -144,14 +137,9 @@ public class MainThread extends Thread {
                     // Safe to ignore
                 }
             }
-
-            // Decide if to keep running
-            synchronized (this) {
-                runningThread = this.running;
-            }
         }
 
-        this.done = true;
+        this.done.set(true);
         log.info("Thread ended.");
     }
 
@@ -159,12 +147,10 @@ public class MainThread extends Thread {
      * Done running the main thread.
      */
     public void done() {
-        synchronized (this) {
-            this.running = false;
-        }
+        this.running.set(false);
 
         // Wait for the thread to finish
-        while (!this.done) {
+        while (!this.done.get()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
