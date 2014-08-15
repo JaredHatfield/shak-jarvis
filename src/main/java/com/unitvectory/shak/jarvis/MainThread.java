@@ -165,6 +165,11 @@ public class MainThread extends Thread {
 
         // Wait for the thread to finish
         while (!this.done) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // Safe to ignore
+            }
         }
     }
 }

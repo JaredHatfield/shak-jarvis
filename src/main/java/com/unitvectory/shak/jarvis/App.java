@@ -86,6 +86,7 @@ public class App implements Daemon {
             }
 
             // Exit the app
+            log.info("Exiting...");
             try {
                 app.stop();
             } catch (Exception e) {
