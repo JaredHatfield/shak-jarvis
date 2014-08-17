@@ -19,7 +19,7 @@ import com.amazonaws.util.json.JSONObject;
  * @author Jared Hatfield
  * 
  */
-public class PushToSpeechClient {
+public class PushToSpeechClient implements PushToSpeech {
 
 	/**
 	 * the log
@@ -37,15 +37,6 @@ public class PushToSpeechClient {
 	public PushToSpeechClient() {
 	}
 
-	/**
-	 * Read text aloud.
-	 * 
-	 * @param deviceid
-	 *            the device id
-	 * @param text
-	 *            the text
-	 * @return true if successful; otherwise false
-	 */
 	public boolean speak(String deviceid, String text) {
 		try {
 			// Build the JSON string

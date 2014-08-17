@@ -19,7 +19,7 @@ import com.unitvectory.shak.jarvis.model.SmartThingsPublish;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
-import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechClient;
+import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeech;
 
 /**
  * The home event processor
@@ -55,9 +55,9 @@ public class HomeEventProcessor {
 	private SmartMotionAction motionAction;
 
 	/**
-	 * the push to speech client
+	 * the push to speech
 	 */
-	private PushToSpeechClient pushToSpeechClient;
+	private PushToSpeech pushToSpeech;
 
 	/**
 	 * Creates a new instance of the HomeEventProcessor class.
@@ -65,12 +65,12 @@ public class HomeEventProcessor {
 	 * @param database
 	 *            the database
 	 */
-	public HomeEventProcessor(ShakDatabase database) {
+	public HomeEventProcessor(ShakDatabase database, PushToSpeech pushToSpeech) {
 		this.database = database;
+		this.pushToSpeech = pushToSpeech;
 		this.contactAction = new SmartContactAction();
 		this.motionAction = new SmartMotionAction();
 		this.locationAction = new PersonLocationAction();
-		this.pushToSpeechClient = new PushToSpeechClient();
 	}
 
 	/**

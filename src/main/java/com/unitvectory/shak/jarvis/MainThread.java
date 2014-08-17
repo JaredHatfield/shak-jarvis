@@ -18,6 +18,7 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
+import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechClient;
 
 /**
  * The main thread.
@@ -76,7 +77,8 @@ public class MainThread extends Thread {
 		this.database = new ShakDatabase(config);
 
 		// Make the event processor
-		this.eventProcessor = new HomeEventProcessor(this.database);
+		this.eventProcessor = new HomeEventProcessor(this.database,
+				new PushToSpeechClient());
 
 		// Make the SQS Client
 		AmazonSQSAsyncClient asyncSQS = new AmazonSQSAsyncClient(
