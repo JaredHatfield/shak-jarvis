@@ -58,6 +58,18 @@ public class ShakDatabase {
     }
 
     /**
+     * Creates a new instance of the ShakDatabase class.
+     * 
+     * This is the in memory instance used for testing.
+     */
+    public ShakDatabase() {
+        this.dataSource = null;
+        this.st = new SmartThingsMemory();
+        this.pl = new PersonLocationMemory();
+        this.pts = new PushToSpeechMemory();
+    }
+
+    /**
      * @return the smart things dao
      */
     public SmartThingsDAO st() {
@@ -84,6 +96,10 @@ public class ShakDatabase {
      * @return true if connected; otherwise false
      */
     public boolean isConnected() {
+        if (this.dataSource == null) {
+            return true;
+        }
+
         Connection connection = null;
         try {
             connection = this.dataSource.getConnection();

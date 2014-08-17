@@ -90,20 +90,19 @@ public class HomeEventProcessor {
             return false;
         }
 
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+        List<ActionNotification> notifications = new ArrayList<ActionNotification>();
 
         if (type.equals("smartthings")) {
-            List<ActionNotification> smartNotifications =
-                    this.processSmartEvent(request);
+            List<ActionNotification> smartNotifications = this
+                    .processSmartEvent(request);
             if (smartNotifications == null) {
                 return false;
             }
 
             this.append(notifications, smartNotifications);
         } else if (type.equals("location")) {
-            List<ActionNotification> locationNotifications =
-                    this.processLocationEvent(request);
+            List<ActionNotification> locationNotifications = this
+                    .processLocationEvent(request);
             if (locationNotifications == null) {
                 return false;
             }
@@ -117,9 +116,8 @@ public class HomeEventProcessor {
         for (ActionNotification notification : notifications) {
             log.info(notification);
 
-            List<String> deviceIds =
-                    this.database.pts()
-                            .getPushDeviceIds(notification.getHome());
+            List<String> deviceIds = this.database.pts().getPushDeviceIds(
+                    notification.getHome());
             if (deviceIds == null) {
                 continue;
             }
@@ -162,8 +160,7 @@ public class HomeEventProcessor {
 
         DatabaseEventCache cache = new DatabaseEventCache(this.database);
 
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+        List<ActionNotification> notifications = new ArrayList<ActionNotification>();
         this.append(notifications,
                 this.locationAction.getActions(cache, location));
 
@@ -210,8 +207,7 @@ public class HomeEventProcessor {
         DatabaseEventCache cache = new DatabaseEventCache(this.database);
 
         // Get the list of actions
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+        List<ActionNotification> notifications = new ArrayList<ActionNotification>();
         if (event instanceof SmartMotion) {
             this.append(notifications,
                     this.motionAction.getActions(cache, event));
