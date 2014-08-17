@@ -21,12 +21,14 @@ public class PushToSpeechMemory implements PushToSpeechDAO {
 	}
 
 	public List<String> getPushDeviceIds(int home) {
-		List<String> list = this.devices.get(new Integer(home));
-		if (list == null) {
-			list = new ArrayList<String>();
-		}
+		synchronized (this) {
+			List<String> list = this.devices.get(new Integer(home));
+			if (list == null) {
+				list = new ArrayList<String>();
+			}
 
-		return Collections.unmodifiableList(list);
+			return Collections.unmodifiableList(list);
+		}
 	}
 
 }

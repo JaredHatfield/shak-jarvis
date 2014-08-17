@@ -32,18 +32,24 @@ public class SmartThingsMemory implements SmartThingsDAO {
 	}
 
 	public InsertResult insertSmartEvent(SmartEvent event) {
-		this.history.add(event);
-		this.recentEvent.put(this.getEventId(event), event);
-		return InsertResult.Success;
+		synchronized (this) {
+			this.history.add(event);
+			this.recentEvent.put(this.getEventId(event), event);
+			return InsertResult.Success;
+		}
 	}
 
 	public SmartThingsDeviceDetails getDeviceDetails(SmartEvent event)
 			throws SQLException {
-		return this.devices.get(this.getEventId(event));
+		synchronized (this) {
+			return this.devices.get(this.getEventId(event));
+		}
 	}
 
 	public SmartEvent getPreviousEvent(SmartEvent event) throws SQLException {
-		return this.recentEvent.get(this.getEventId(event));
+		synchronized (this) {
+			return this.recentEvent.get(this.getEventId(event));
+		}
 	}
 
 	private String getEventId(SmartEvent event) {

@@ -26,14 +26,18 @@ public class PersonLocationMemory implements PersonLocationDAO {
 	}
 
 	public PersonLocationDetails getPerson(String token) {
-		return this.people.get(token);
+		synchronized (this) {
+			return this.people.get(token);
+		}
 	}
 
 	public InsertResult insertLocation(PersonLocationPublish publish) {
 		// TODO: This is a horrible analog to the necessary data structure for
 		// this interface
-		this.locations.add(publish);
-		return InsertResult.Success;
+		synchronized (this) {
+			this.locations.add(publish);
+			return InsertResult.Success;
+		}
 	}
 
 }
