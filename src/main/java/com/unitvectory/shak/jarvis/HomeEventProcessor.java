@@ -123,8 +123,8 @@ public class HomeEventProcessor {
 			}
 
 			for (String deviceid : deviceIds) {
-				this.pushToSpeechClient.speak(deviceid,
-						notification.getNotification());
+				// this.pushToSpeechClient.speak(deviceid,
+				// notification.getNotification());
 			}
 		}
 

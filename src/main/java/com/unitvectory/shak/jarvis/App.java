@@ -85,6 +85,7 @@ public class App implements Daemon {
 			}
 
 			// Exit the app
+			log.info("Exiting...");
 			try {
 				app.stop();
 			} catch (Exception e) {
@@ -99,7 +100,9 @@ public class App implements Daemon {
 	}
 
 	public void init(DaemonContext arg0) throws DaemonInitException, Exception {
-		// TODO: Load the config for the daemon
+		Serializer serializer = new Persister();
+		String configPath = "/etc/shak-jarvis/config.xml";
+		config = serializer.read(AppConfig.class, new File(configPath));
 	}
 
 	public void start() throws Exception {
