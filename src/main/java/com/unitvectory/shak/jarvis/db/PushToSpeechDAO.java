@@ -10,12 +10,12 @@ import java.util.List;
  */
 public interface PushToSpeechDAO {
 
-    /**
-     * Gets the list of device ids.
-     * 
-     * @param home
-     *            the home id
-     * @return the device ids.
-     */
-    List<String> getPushDeviceIds(int home);
+	/**
+	 * Gets the list of device ids.
+	 * 
+	 * @param home
+	 *            the home id
+	 * @return the device ids.
+	 */
+	List<String> getPushDeviceIds(int home);
 }

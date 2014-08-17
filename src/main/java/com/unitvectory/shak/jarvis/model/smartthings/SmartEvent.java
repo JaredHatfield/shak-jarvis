@@ -18,183 +18,182 @@ import com.unitvectory.shak.jarvis.exception.SmartException;
  */
 public abstract class SmartEvent {
 
-    /**
-     * The logger
-     */
-    private static Logger log = Logger.getLogger(SmartEvent.class);
+	/**
+	 * The logger
+	 */
+	private static Logger log = Logger.getLogger(SmartEvent.class);
 
-    /**
-     * the name
-     */
-    private String name;
+	/**
+	 * the name
+	 */
+	private String name;
 
-    /**
-     * the hubId
-     */
-    private String hubId;
+	/**
+	 * the hubId
+	 */
+	private String hubId;
 
-    /**
-     * the locationId
-     */
-    private String locationId;
+	/**
+	 * the locationId
+	 */
+	private String locationId;
 
-    /**
-     * the deviceId
-     * 
-     */
-    private String deviceId;
+	/**
+	 * the deviceId
+	 * 
+	 */
+	private String deviceId;
 
-    /**
-     * the eventId
-     */
-    private String eventId;
+	/**
+	 * the eventId
+	 */
+	private String eventId;
 
-    /**
-     * the date
-     */
-    private String date;
+	/**
+	 * the date
+	 */
+	private String date;
 
-    /**
-     * Creates a new instance of the SmartEvent class.
-     * 
-     * @param name
-     *            the name
-     * @param hubId
-     *            the hubId
-     * @param locationId
-     *            the locationId
-     * @param deviceId
-     *            the deviceId
-     * @param eventId
-     *            the eventId
-     * @param date
-     *            the date
-     * @throws SmartException
-     */
-    public SmartEvent(String name, String hubId, String locationId,
-            String deviceId, String eventId, String date) throws SmartException {
-        this.name = name;
-        this.hubId = hubId;
-        this.locationId = locationId;
-        this.deviceId = deviceId;
-        this.eventId = eventId;
-        this.date = date;
-    }
+	/**
+	 * Creates a new instance of the SmartEvent class.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param hubId
+	 *            the hubId
+	 * @param locationId
+	 *            the locationId
+	 * @param deviceId
+	 *            the deviceId
+	 * @param eventId
+	 *            the eventId
+	 * @param date
+	 *            the date
+	 * @throws SmartException
+	 */
+	public SmartEvent(String name, String hubId, String locationId,
+			String deviceId, String eventId, String date) throws SmartException {
+		this.name = name;
+		this.hubId = hubId;
+		this.locationId = locationId;
+		this.deviceId = deviceId;
+		this.eventId = eventId;
+		this.date = date;
+	}
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return the hubId
-     */
-    public String getHubId() {
-        return hubId;
-    }
+	/**
+	 * @return the hubId
+	 */
+	public String getHubId() {
+		return hubId;
+	}
 
-    /**
-     * @return the locationId
-     */
-    public String getLocationId() {
-        return locationId;
-    }
+	/**
+	 * @return the locationId
+	 */
+	public String getLocationId() {
+		return locationId;
+	}
 
-    /**
-     * @return the deviceId
-     */
-    public String getDeviceId() {
-        return deviceId;
-    }
+	/**
+	 * @return the deviceId
+	 */
+	public String getDeviceId() {
+		return deviceId;
+	}
 
-    /**
-     * @return the eventId
-     */
-    public String getEventId() {
-        return eventId;
-    }
+	/**
+	 * @return the eventId
+	 */
+	public String getEventId() {
+		return eventId;
+	}
 
-    /**
-     * @return the date
-     */
-    public String getDate() {
-        return this.date;
-    }
+	/**
+	 * @return the date
+	 */
+	public String getDate() {
+		return this.date;
+	}
 
-    /**
-     * Gets the timestamp
-     * 
-     * @return the timestamp
-     */
-    public Timestamp getTimestamp() {
-        try {
-            java.util.Date utilDate =
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                            .parse(this.date);
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-            return new Timestamp(sqlDate.getTime());
-        } catch (Exception e) {
-            log.error("Unable to parse date " + this.date, e);
-            return null;
-        }
-    }
+	/**
+	 * Gets the timestamp
+	 * 
+	 * @return the timestamp
+	 */
+	public Timestamp getTimestamp() {
+		try {
+			java.util.Date utilDate = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(this.date);
+			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+			return new Timestamp(sqlDate.getTime());
+		} catch (Exception e) {
+			log.error("Unable to parse date " + this.date, e);
+			return null;
+		}
+	}
 
-    /**
-     * Gets the history query.
-     * 
-     * @return the history query
-     */
-    public abstract String getHistoryQuery();
+	/**
+	 * Gets the history query.
+	 * 
+	 * @return the history query
+	 */
+	public abstract String getHistoryQuery();
 
-    /**
-     * Sets the history prepared statement parameters
-     * 
-     * @param stmt
-     *            the prepared statement
-     * @param device
-     *            the device
-     * @throws SQLException
-     */
-    public abstract void setHistoryParams(PreparedStatement stmt, int device)
-            throws SQLException;
+	/**
+	 * Sets the history prepared statement parameters
+	 * 
+	 * @param stmt
+	 *            the prepared statement
+	 * @param device
+	 *            the device
+	 * @throws SQLException
+	 */
+	public abstract void setHistoryParams(PreparedStatement stmt, int device)
+			throws SQLException;
 
-    /**
-     * Gets the recent query.
-     * 
-     * @return the recent query
-     */
-    public abstract String getRecentQuery();
+	/**
+	 * Gets the recent query.
+	 * 
+	 * @return the recent query
+	 */
+	public abstract String getRecentQuery();
 
-    /**
-     * Sets the recent prepared statement parameters
-     * 
-     * @param stmt
-     *            the prepared statement
-     * @param device
-     *            the device
-     * @throws SQLException
-     */
-    public abstract void setRecentParams(PreparedStatement stmt, int device)
-            throws SQLException;
+	/**
+	 * Sets the recent prepared statement parameters
+	 * 
+	 * @param stmt
+	 *            the prepared statement
+	 * @param device
+	 *            the device
+	 * @throws SQLException
+	 */
+	public abstract void setRecentParams(PreparedStatement stmt, int device)
+			throws SQLException;
 
-    /**
-     * Gets the previous query.
-     * 
-     * @return the previous query
-     */
-    public abstract String getPreviousQuery();
+	/**
+	 * Gets the previous query.
+	 * 
+	 * @return the previous query
+	 */
+	public abstract String getPreviousQuery();
 
-    /**
-     * Gets the previous event object.
-     * 
-     * @param rs
-     *            the result set
-     * @return the event object
-     * @throws SQLException
-     * @throws SmartException
-     */
-    public abstract SmartEvent getPreviousObject(ResultSet rs)
-            throws SQLException, SmartException;
+	/**
+	 * Gets the previous event object.
+	 * 
+	 * @param rs
+	 *            the result set
+	 * @return the event object
+	 * @throws SQLException
+	 * @throws SmartException
+	 */
+	public abstract SmartEvent getPreviousObject(ResultSet rs)
+			throws SQLException, SmartException;
 }

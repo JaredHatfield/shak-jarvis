@@ -16,36 +16,35 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
  */
 public class SmartMotionAction extends SmartAction {
 
-    /**
-     * Creates a new instance of the SmartMotionAction class.
-     * 
-     */
-    public SmartMotionAction() {
-    }
+	/**
+	 * Creates a new instance of the SmartMotionAction class.
+	 * 
+	 */
+	public SmartMotionAction() {
+	}
 
-    @Override
-    public List<ActionNotification> getActions(DatabaseEventCache cache,
-            SmartEvent event) {
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+	@Override
+	public List<ActionNotification> getActions(DatabaseEventCache cache,
+			SmartEvent event) {
+		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
 
-        if (!(event instanceof SmartMotion)) {
-            return notifications;
-        }
+		if (!(event instanceof SmartMotion)) {
+			return notifications;
+		}
 
-        SmartMotion motion = (SmartMotion) event;
+		SmartMotion motion = (SmartMotion) event;
 
-        SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
+		SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
 
-        if (details == null) {
-            return notifications;
-        }
+		if (details == null) {
+			return notifications;
+		}
 
-        if (motion.getStatus() == 'A') {
-            notifications.add(new ActionNotification("MOTION", "Motion in "
-                    + details.getName(), false, details.getHome()));
-        }
+		if (motion.getStatus() == 'A') {
+			notifications.add(new ActionNotification("MOTION", "Motion in "
+					+ details.getName(), false, details.getHome()));
+		}
 
-        return notifications;
-    }
+		return notifications;
+	}
 }

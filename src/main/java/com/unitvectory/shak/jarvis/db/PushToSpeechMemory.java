@@ -14,19 +14,19 @@ import java.util.Map;
  */
 public class PushToSpeechMemory implements PushToSpeechDAO {
 
-    private Map<Integer, List<String>> devices;
+	private Map<Integer, List<String>> devices;
 
-    public PushToSpeechMemory() {
-        this.devices = new HashMap<Integer, List<String>>();
-    }
+	public PushToSpeechMemory() {
+		this.devices = new HashMap<Integer, List<String>>();
+	}
 
-    public List<String> getPushDeviceIds(int home) {
-        List<String> list = this.devices.get(new Integer(home));
-        if (list == null) {
-            list = new ArrayList<String>();
-        }
+	public List<String> getPushDeviceIds(int home) {
+		List<String> list = this.devices.get(new Integer(home));
+		if (list == null) {
+			list = new ArrayList<String>();
+		}
 
-        return Collections.unmodifiableList(list);
-    }
+		return Collections.unmodifiableList(list);
+	}
 
 }

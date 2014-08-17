@@ -8,18 +8,18 @@ package com.unitvectory.shak.jarvis.db;
  */
 public enum InsertResult {
 
-    /**
-     * The insert was successful.
-     */
-    Success,
+	/**
+	 * The insert was successful.
+	 */
+	Success,
 
-    /**
-     * There was an error.
-     */
-    Error,
+	/**
+	 * There was an error.
+	 */
+	Error,
 
-    /**
-     * The record was duplicated.
-     */
-    Duplicate
+	/**
+	 * The record was duplicated.
+	 */
+	Duplicate
 }

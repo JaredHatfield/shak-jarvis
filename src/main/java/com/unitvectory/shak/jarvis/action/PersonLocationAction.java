@@ -15,45 +15,44 @@ import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
  */
 public class PersonLocationAction {
 
-    /**
-     * Creates an instance of the PersonLocationAction class.
-     */
-    public PersonLocationAction() {
-    }
+	/**
+	 * Creates an instance of the PersonLocationAction class.
+	 */
+	public PersonLocationAction() {
+	}
 
-    /**
-     * Gets the list of actions for an event.
-     * 
-     * @param cache
-     *            the cache
-     * @param event
-     *            the event
-     * @return the list of actions
-     */
-    public List<ActionNotification> getActions(DatabaseEventCache cache,
-            PersonLocationPublish event) {
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+	/**
+	 * Gets the list of actions for an event.
+	 * 
+	 * @param cache
+	 *            the cache
+	 * @param event
+	 *            the event
+	 * @return the list of actions
+	 */
+	public List<ActionNotification> getActions(DatabaseEventCache cache,
+			PersonLocationPublish event) {
+		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
 
-        PersonLocationDetails person = cache.getPerson(event.getToken());
-        if (person == null) {
-            return notifications;
-        }
+		PersonLocationDetails person = cache.getPerson(event.getToken());
+		if (person == null) {
+			return notifications;
+		}
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(person.getFirstName());
-        if (event.getStatus() == 'P') {
-            sb.append(" is arriving ");
-        } else if (event.getStatus() == 'N') {
-            sb.append(" has left ");
-        } else {
-            sb.append(" has moved to ");
-        }
+		StringBuilder sb = new StringBuilder();
+		sb.append(person.getFirstName());
+		if (event.getStatus() == 'P') {
+			sb.append(" is arriving ");
+		} else if (event.getStatus() == 'N') {
+			sb.append(" has left ");
+		} else {
+			sb.append(" has moved to ");
+		}
 
-        sb.append(event.getLocation());
-        notifications.add(new ActionNotification("LOCATION", sb.toString(),
-                true, person.getHome()));
+		sb.append(event.getLocation());
+		notifications.add(new ActionNotification("LOCATION", sb.toString(),
+				true, person.getHome()));
 
-        return notifications;
-    }
+		return notifications;
+	}
 }

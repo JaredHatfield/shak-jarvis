@@ -16,45 +16,44 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
  */
 public class SmartContactAction extends SmartAction {
 
-    /**
-     * Creates a new instance of the SmartContactAction class.
-     * 
-     */
-    public SmartContactAction() {
-    }
+	/**
+	 * Creates a new instance of the SmartContactAction class.
+	 * 
+	 */
+	public SmartContactAction() {
+	}
 
-    @Override
-    public List<ActionNotification> getActions(DatabaseEventCache cache,
-            SmartEvent event) {
-        List<ActionNotification> notifications =
-                new ArrayList<ActionNotification>();
+	@Override
+	public List<ActionNotification> getActions(DatabaseEventCache cache,
+			SmartEvent event) {
+		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
 
-        if (!(event instanceof SmartContact)) {
-            return notifications;
-        }
+		if (!(event instanceof SmartContact)) {
+			return notifications;
+		}
 
-        SmartContact contact = (SmartContact) event;
+		SmartContact contact = (SmartContact) event;
 
-        SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
+		SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
 
-        if (details == null) {
-            return notifications;
-        }
+		if (details == null) {
+			return notifications;
+		}
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(details.getName());
-        sb.append(" is ");
-        if (contact.getStatus() == 'O') {
-            sb.append("open... ");
-        } else if (contact.getStatus() == 'C') {
-            sb.append("closed... ");
-        } else {
-            sb.append("unknown... ");
-        }
+		StringBuilder sb = new StringBuilder();
+		sb.append(details.getName());
+		sb.append(" is ");
+		if (contact.getStatus() == 'O') {
+			sb.append("open... ");
+		} else if (contact.getStatus() == 'C') {
+			sb.append("closed... ");
+		} else {
+			sb.append("unknown... ");
+		}
 
-        notifications.add(new ActionNotification("CONTACT", sb.toString(),
-                true, details.getHome()));
+		notifications.add(new ActionNotification("CONTACT", sb.toString(),
+				true, details.getHome()));
 
-        return notifications;
-    }
+		return notifications;
+	}
 }

@@ -15,63 +15,61 @@ import org.apache.commons.dbcp.BasicDataSource;
  */
 public class AbstractDatabase {
 
-    /**
-     * the basic data source
-     */
-    private BasicDataSource ds;
+	/**
+	 * the basic data source
+	 */
+	private BasicDataSource ds;
 
-    /**
-     * Creates a new instance of the AbstractDatabase class.
-     * 
-     * @param ds
-     *            the basic data source
-     */
-    public AbstractDatabase(BasicDataSource ds) {
-        this.ds = ds;
-    }
+	/**
+	 * Creates a new instance of the AbstractDatabase class.
+	 * 
+	 * @param ds
+	 *            the basic data source
+	 */
+	public AbstractDatabase(BasicDataSource ds) {
+		this.ds = ds;
+	}
 
-    /**
-     * Gets a database connection.
-     * 
-     * @return the connection
-     * @throws SQLException
-     */
-    protected Connection getConnection()
-            throws SQLException {
-        return this.ds.getConnection();
-    }
+	/**
+	 * Gets a database connection.
+	 * 
+	 * @return the connection
+	 * @throws SQLException
+	 */
+	protected Connection getConnection() throws SQLException {
+		return this.ds.getConnection();
+	}
 
-    /**
-     * Closes everything.
-     * 
-     * @param con
-     *            the connection
-     * @param stmt
-     *            the statement
-     * @param rs
-     *            the result set
-     */
-    protected void
-            closeEverything(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-        }
+	/**
+	 * Closes everything.
+	 * 
+	 * @param con
+	 *            the connection
+	 * @param stmt
+	 *            the statement
+	 * @param rs
+	 *            the result set
+	 */
+	protected void closeEverything(Connection con, Statement stmt, ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+			}
+		}
 
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-        }
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+			}
+		}
 
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-            }
-        }
-    }
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
 }

@@ -16,24 +16,24 @@ import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
  */
 public class PersonLocationMemory implements PersonLocationDAO {
 
-    private Map<String, PersonLocationDetails> people;
+	private Map<String, PersonLocationDetails> people;
 
-    private List<PersonLocationPublish> locations;
+	private List<PersonLocationPublish> locations;
 
-    public PersonLocationMemory() {
-        this.people = new HashMap<String, PersonLocationDetails>();
-        this.locations = new ArrayList<PersonLocationPublish>();
-    }
+	public PersonLocationMemory() {
+		this.people = new HashMap<String, PersonLocationDetails>();
+		this.locations = new ArrayList<PersonLocationPublish>();
+	}
 
-    public PersonLocationDetails getPerson(String token) {
-        return this.people.get(token);
-    }
+	public PersonLocationDetails getPerson(String token) {
+		return this.people.get(token);
+	}
 
-    public InsertResult insertLocation(PersonLocationPublish publish) {
-        // TODO: This is a horrible analog to the necessary data structure for
-        // this interface
-        this.locations.add(publish);
-        return InsertResult.Success;
-    }
+	public InsertResult insertLocation(PersonLocationPublish publish) {
+		// TODO: This is a horrible analog to the necessary data structure for
+		// this interface
+		this.locations.add(publish);
+		return InsertResult.Success;
+	}
 
 }

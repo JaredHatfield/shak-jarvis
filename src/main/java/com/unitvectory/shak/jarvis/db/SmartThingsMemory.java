@@ -19,38 +19,37 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
  */
 public class SmartThingsMemory implements SmartThingsDAO {
 
-    private Map<String, SmartThingsDeviceDetails> devices;
+	private Map<String, SmartThingsDeviceDetails> devices;
 
-    private List<SmartEvent> history;
+	private List<SmartEvent> history;
 
-    private Map<String, SmartEvent> recentEvent;
+	private Map<String, SmartEvent> recentEvent;
 
-    public SmartThingsMemory() {
-        this.devices = new HashMap<String, SmartThingsDeviceDetails>();
-        this.history = new ArrayList<SmartEvent>();
-        this.recentEvent = new HashMap<String, SmartEvent>();
-    }
+	public SmartThingsMemory() {
+		this.devices = new HashMap<String, SmartThingsDeviceDetails>();
+		this.history = new ArrayList<SmartEvent>();
+		this.recentEvent = new HashMap<String, SmartEvent>();
+	}
 
-    public InsertResult insertSmartEvent(SmartEvent event) {
-        this.history.add(event);
-        this.recentEvent.put(this.getEventId(event), event);
-        return InsertResult.Success;
-    }
+	public InsertResult insertSmartEvent(SmartEvent event) {
+		this.history.add(event);
+		this.recentEvent.put(this.getEventId(event), event);
+		return InsertResult.Success;
+	}
 
-    public SmartThingsDeviceDetails getDeviceDetails(SmartEvent event)
-            throws SQLException {
-        return this.devices.get(this.getEventId(event));
-    }
+	public SmartThingsDeviceDetails getDeviceDetails(SmartEvent event)
+			throws SQLException {
+		return this.devices.get(this.getEventId(event));
+	}
 
-    public SmartEvent getPreviousEvent(SmartEvent event)
-            throws SQLException {
-        return this.recentEvent.get(this.getEventId(event));
-    }
+	public SmartEvent getPreviousEvent(SmartEvent event) throws SQLException {
+		return this.recentEvent.get(this.getEventId(event));
+	}
 
-    private String getEventId(SmartEvent event) {
-        String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
-                + "/" + event.getHubId();
-        id = DigestUtils.sha1Hex(id);
-        return id;
-    }
+	private String getEventId(SmartEvent event) {
+		String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
+				+ "/" + event.getHubId();
+		id = DigestUtils.sha1Hex(id);
+		return id;
+	}
 }
