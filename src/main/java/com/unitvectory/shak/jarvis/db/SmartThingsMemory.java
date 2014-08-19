@@ -52,6 +52,19 @@ public class SmartThingsMemory implements SmartThingsDAO {
 		}
 	}
 
+	public void insertDeviceDetails(String deviceid, String locationid,
+			String hubid, int home, String name, String type, boolean inside,
+			boolean outside, boolean target) {
+		synchronized (this) {
+			SmartThingsDeviceDetails details = new SmartThingsDeviceDetails(
+					deviceid, locationid, hubid, home, name, type, inside,
+					outside, target);
+			String id = "/" + deviceid + "/" + locationid + "/" + hubid;
+			id = DigestUtils.sha1Hex(id);
+			this.devices.put(id, details);
+		}
+	}
+
 	private String getEventId(SmartEvent event) {
 		String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
 				+ "/" + event.getHubId();

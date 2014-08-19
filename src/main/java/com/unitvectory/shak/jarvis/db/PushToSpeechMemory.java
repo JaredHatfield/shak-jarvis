@@ -31,4 +31,18 @@ public class PushToSpeechMemory implements PushToSpeechDAO {
 		}
 	}
 
+	public void insert(int home, String device) {
+		synchronized (this) {
+			List<String> list = this.devices.get(new Integer(home));
+			if (list == null) {
+				list = new ArrayList<String>();
+				this.devices.put(new Integer(home), list);
+			}
+
+			if (!list.contains(device)) {
+				list.add(device);
+			}
+		}
+	}
+
 }

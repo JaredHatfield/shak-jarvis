@@ -123,12 +123,32 @@ public class HomeEventProcessor {
 			}
 
 			for (String deviceid : deviceIds) {
-				// this.pushToSpeechClient.speak(deviceid,
-				// notification.getNotification());
+				if (notification.isSpeak()) {
+					this.pushToSpeech.speak(deviceid,
+							notification.getNotification());
+				}
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the shak database.
+	 * 
+	 * @return the database
+	 */
+	public ShakDatabase getDatabase() {
+		return database;
+	}
+
+	/**
+	 * Get the push to speech client.
+	 * 
+	 * @return the push to speech client
+	 */
+	public PushToSpeech getPushToSpeech() {
+		return pushToSpeech;
 	}
 
 	/**

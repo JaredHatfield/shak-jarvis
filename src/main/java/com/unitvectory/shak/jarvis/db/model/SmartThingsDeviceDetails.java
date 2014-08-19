@@ -9,11 +9,6 @@ package com.unitvectory.shak.jarvis.db.model;
 public class SmartThingsDeviceDetails {
 
 	/**
-	 * the pid
-	 */
-	private int pid;
-
-	/**
 	 * the device id
 	 */
 	private String deviceid;
@@ -65,18 +60,40 @@ public class SmartThingsDeviceDetails {
 	}
 
 	/**
-	 * @return the pid
+	 * Creates a new instance of the SmartThingsDeviceDetails class.
+	 * 
+	 * @param deviceid
+	 *            the device id
+	 * @param locationid
+	 *            the location id
+	 * @param hubid
+	 *            the hub id
+	 * @param home
+	 *            the home
+	 * @param name
+	 *            the name
+	 * @param type
+	 *            the type
+	 * @param inside
+	 *            the inside flag
+	 * @param outside
+	 *            the outside flag
+	 * @param target
+	 *            the target flag
 	 */
-	public int getPid() {
-		return pid;
-	}
-
-	/**
-	 * @param pid
-	 *            the pid to set
-	 */
-	public void setPid(int pid) {
-		this.pid = pid;
+	public SmartThingsDeviceDetails(String deviceid, String locationid,
+			String hubid, int home, String name, String type, boolean inside,
+			boolean outside, boolean target) {
+		super();
+		this.deviceid = deviceid;
+		this.locationid = locationid;
+		this.hubid = hubid;
+		this.home = home;
+		this.name = name;
+		this.type = type;
+		this.inside = inside;
+		this.outside = outside;
+		this.target = target;
 	}
 
 	/**

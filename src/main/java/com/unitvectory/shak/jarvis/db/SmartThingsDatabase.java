@@ -63,7 +63,6 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				SmartThingsDeviceDetails details = new SmartThingsDeviceDetails();
-				details.setPid(rs.getInt("pid"));
 				details.setHome(rs.getInt("home"));
 				details.setName(rs.getString("name"));
 				details.setType(rs.getString("type"));

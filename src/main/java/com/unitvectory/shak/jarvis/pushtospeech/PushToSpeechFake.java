@@ -32,4 +32,7 @@ public class PushToSpeechFake implements PushToSpeech {
 		}
 	}
 
+	public List<String> getHistory(String deviceid) {
+		return this.text.get(deviceid);
+	}
 }
