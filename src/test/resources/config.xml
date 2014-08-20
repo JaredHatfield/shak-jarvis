@@ -1,0 +1,16 @@
+<config>
+	<!-- AWS Credentials -->
+	<awsaccesskey>AWS_ACCESS_KEY</awsaccesskey>
+	<awssecretkey>AWS_SECRET_KEY</awssecretkey>
+
+	<!-- SQS Queue-->
+	<queueurl>QUEUE_URL</queueurl>
+
+	<!-- MySQL Connection Information -->
+	<dburl>DB_URL</dburl>
+	<dbuser>DB_USER</dbuser>
+	<dbpassword>DB_PASSWORD</dbpassword>
+	
+	<!-- extra element that is not defined -->
+	<foo>bar</foo>
+</config>

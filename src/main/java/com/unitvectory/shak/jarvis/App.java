@@ -1,6 +1,5 @@
 package com.unitvectory.shak.jarvis;
 
-import java.io.File;
 import java.util.Scanner;
 
 import org.apache.commons.cli.BasicParser;
@@ -13,8 +12,6 @@ import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.apache.log4j.Logger;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 
 /**
  * The main application.
@@ -62,11 +59,8 @@ public class App implements Daemon {
 			String configPath = line.getOptionValue("config");
 
 			// Load the config
-			Serializer serializer = new Persister();
-			try {
-				config = serializer.read(AppConfig.class, new File(configPath));
-			} catch (Exception e) {
-				log.error("Unable to load config file.", e);
+			config = AppConfig.load(configPath);
+			if (config == null) {
 				return;
 			}
 
@@ -100,9 +94,8 @@ public class App implements Daemon {
 	}
 
 	public void init(DaemonContext arg0) throws DaemonInitException, Exception {
-		Serializer serializer = new Persister();
 		String configPath = "/etc/shak-jarvis/config.xml";
-		config = serializer.read(AppConfig.class, new File(configPath));
+		config = AppConfig.load(configPath);
 	}
 
 	public void start() throws Exception {
