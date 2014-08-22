@@ -24,6 +24,11 @@ public class PersonLocationDetails {
 	private int home;
 
 	/**
+	 * the push over token
+	 */
+	private String pushOver;
+
+	/**
 	 * Creates a new instance of the PersonLocationDetails class.
 	 * 
 	 * @param firstName
@@ -32,11 +37,15 @@ public class PersonLocationDetails {
 	 *            the last name
 	 * @param home
 	 *            the home id
+	 * @param pushOver
+	 *            the push over
 	 */
-	public PersonLocationDetails(String firstName, String lastName, int home) {
+	public PersonLocationDetails(String firstName, String lastName, int home,
+			String pushOver) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.home = home;
+		this.pushOver = pushOver;
 	}
 
 	/**
@@ -60,4 +69,10 @@ public class PersonLocationDetails {
 		return home;
 	}
 
+	/**
+	 * @return the pushOver
+	 */
+	public String getPushOver() {
+		return pushOver;
+	}
 }

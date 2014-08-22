@@ -15,6 +15,8 @@ import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.db.SmartThingsMemory;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
 import com.unitvectory.shak.jarvis.model.RequestGenerator;
+import com.unitvectory.shak.jarvis.pushover.PushOverFake;
+import com.unitvectory.shak.jarvis.pushover.PushOverFakeMessage;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechFake;
 
 /**
@@ -62,16 +64,17 @@ public class HomeEventProcessorTest {
 						this.hubId, this.locationId, false);
 		processor.processEvent(requestClose);
 
-		// Verify the speech output
-		String[] expected = { "Front Door is open... ",
+		// Verify the output
+		String[] speech = { "Front Door is open... ",
 				"Front Door is closed... " };
-		verifySpeech(processor, expected);
+		String[] notification = {};
+		this.verify(processor, speech, notification);
 	}
 
 	private HomeEventProcessor getProcessor() {
 		// New processor
 		HomeEventProcessor processor = new HomeEventProcessor(
-				new ShakDatabase(), new PushToSpeechFake());
+				new ShakDatabase(), new PushToSpeechFake(), new PushOverFake());
 
 		// Configure the front door
 		SmartThingsMemory st = (SmartThingsMemory) processor.getDatabase().st();
@@ -87,15 +90,25 @@ public class HomeEventProcessorTest {
 		return processor;
 	}
 
-	private void verifySpeech(HomeEventProcessor processor, String[] expected) {
-		assertNotNull(expected);
+	private void verify(HomeEventProcessor processor, String[] expectedSpeech,
+			String[] expectedNotification) {
+		assertNotNull(expectedSpeech);
 		PushToSpeechFake pushToSpeech = (PushToSpeechFake) processor
 				.getPushToSpeech();
 		List<String> speech = pushToSpeech.getHistory(pushDeviceId);
 		assertNotNull(speech);
-		assertEquals(expected.length, speech.size());
-		for (int i = 0; i < expected.length; i++) {
-			assertEquals(expected[i], speech.get(i));
+		assertEquals(expectedSpeech.length, speech.size());
+		for (int i = 0; i < expectedSpeech.length; i++) {
+			assertEquals(expectedSpeech[i], speech.get(i));
+		}
+
+		assertNotNull(expectedNotification);
+		PushOverFake pushOver = (PushOverFake) processor.getPushover();
+		List<PushOverFakeMessage> notifications = pushOver.getMessages();
+		assertEquals(expectedNotification.length, notifications.size());
+		for (int i = 0; i < expectedNotification.length; i++) {
+			assertEquals(expectedNotification[i], notifications.get(i)
+					.getText());
 		}
 	}
 

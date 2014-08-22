@@ -40,4 +40,10 @@ public class PersonLocationMemory implements PersonLocationDAO {
 		}
 	}
 
+	public void insertPerson(String token, PersonLocationDetails details) {
+		synchronized (this) {
+			this.people.put(token, details);
+		}
+	}
+
 }

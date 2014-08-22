@@ -38,7 +38,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	/**
 	 * the person name query
 	 */
-	private static final String PersonNameQuery = "SELECT firstName, lastName, home "
+	private static final String PersonNameQuery = "SELECT firstName, lastName, home, pushover "
 			+ "FROM person WHERE token = ? LIMIT 1 ";
 
 	public PersonLocationDetails getPerson(String token) {
@@ -54,7 +54,9 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 				String firstName = rs.getString("firstName");
 				String lastName = rs.getString("lastName");
 				int home = rs.getInt("home");
-				return new PersonLocationDetails(firstName, lastName, home);
+				String pushover = rs.getString("pushover");
+				return new PersonLocationDetails(firstName, lastName, home,
+						pushover);
 			}
 
 			return null;

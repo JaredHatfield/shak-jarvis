@@ -18,6 +18,8 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
+import com.unitvectory.shak.jarvis.pushover.PushOver;
+import com.unitvectory.shak.jarvis.pushover.PushOverClient;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechClient;
 
 /**
@@ -64,6 +66,11 @@ public class MainThread extends Thread {
 	private AmazonSQSAsync sqs;
 
 	/**
+	 * the pushover client
+	 */
+	private PushOver pushover;
+
+	/**
 	 * Creates a new instance of MainThread.
 	 * 
 	 * @param config
@@ -76,9 +83,14 @@ public class MainThread extends Thread {
 
 		this.database = new ShakDatabase(config);
 
+		// The pushover client
+		if (config.getPushover() != null && config.getPushover().length() > 0) {
+			this.pushover = new PushOverClient(config.getPushover());
+		}
+
 		// Make the event processor
 		this.eventProcessor = new HomeEventProcessor(this.database,
-				new PushToSpeechClient());
+				new PushToSpeechClient(), this.pushover);
 
 		// Make the SQS Client
 		AmazonSQSAsyncClient asyncSQS = new AmazonSQSAsyncClient(

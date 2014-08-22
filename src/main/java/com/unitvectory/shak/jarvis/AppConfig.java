@@ -59,6 +59,12 @@ public class AppConfig {
 	private String dbUrl;
 
 	/**
+	 * the pushover app key
+	 */
+	@Element(name = "pushover", required = false)
+	private String pushover;
+
+	/**
 	 * Creates a new instance of the AppConfig class.
 	 */
 	public AppConfig() {
@@ -104,6 +110,13 @@ public class AppConfig {
 	 */
 	public String getDbUrl() {
 		return dbUrl;
+	}
+
+	/**
+	 * @return the pushover
+	 */
+	public String getPushover() {
+		return pushover;
 	}
 
 	/**
