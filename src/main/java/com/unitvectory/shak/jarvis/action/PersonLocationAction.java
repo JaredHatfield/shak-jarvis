@@ -42,7 +42,7 @@ public class PersonLocationAction {
 		StringBuilder sb = new StringBuilder();
 		sb.append(person.getFirstName());
 		if (event.getStatus() == 'P') {
-			sb.append(" is arriving ");
+			sb.append(" is arriving at ");
 		} else if (event.getStatus() == 'N') {
 			sb.append(" has left ");
 		} else {
