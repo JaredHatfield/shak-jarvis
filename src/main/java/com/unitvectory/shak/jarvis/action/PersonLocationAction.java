@@ -42,7 +42,10 @@ public class PersonLocationAction {
 		StringBuilder sb = new StringBuilder();
 		sb.append(person.getFirstName());
 		if (event.getStatus() == 'P') {
-			sb.append(" is arriving at ");
+			sb.append(" is arriving ");
+			if (!event.getLocation().equals("home")) {
+				sb.append("at ");
+			}
 		} else if (event.getStatus() == 'N') {
 			sb.append(" has left ");
 		} else {
@@ -50,6 +53,7 @@ public class PersonLocationAction {
 		}
 
 		sb.append(event.getLocation());
+		sb.append("... ");
 		notifications.add(new ActionNotification("LOCATION", sb.toString(),
 				true, person.getHome()));
 

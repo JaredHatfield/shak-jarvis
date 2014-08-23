@@ -46,22 +46,32 @@ public class RequestGenerator {
 		return buildSmartEvent(date, deviceId, hubId, locationId, fields);
 	}
 
+	public static JsonPublishRequest buildLocation(Date date, String token,
+			String location, char status) {
+		try {
+			String dateString = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date);
+
+			JSONObject message = new JSONObject();
+			message.put("auth", "foobar");
+			message.put("type", "location");
+			message.put("token", token);
+			message.put("location", location);
+			message.put("status", status + "");
+			message.put("date", dateString);
+
+			return buildSQS(dateString, message);
+		} catch (JSONException e) {
+			return null;
+		}
+	}
+
 	private static JsonPublishRequest buildSmartEvent(Date date,
 			String deviceId, String hubId, String locationId,
 			Map<String, String> fields) {
 		try {
 			String dateString = new SimpleDateFormat(
 					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date);
-
-			JSONObject json = new JSONObject();
-			json.put("Type", "Notification");
-			json.put("MessageId", UUID.randomUUID().toString());
-			json.put("TopicArn", "arn:aws:sns:us-east-1:00000000000:sensors");
-			json.put("Timestamp", dateString);
-			json.put("SignatureVersion", "0");
-			json.put("Signature", "NOT_SET");
-			json.put("SigningCertURL", "NOT_SET");
-			json.put("UnsubscribeURL", "NOT_SET");
 
 			JSONObject message = new JSONObject();
 			message.put("auth", "foobar");
@@ -78,10 +88,24 @@ public class RequestGenerator {
 				message.put(field.getKey(), field.getValue());
 			}
 
-			json.put("Message", message.toString());
-			return new JsonPublishRequest(json.toString());
+			return buildSQS(dateString, message);
 		} catch (JSONException e) {
 			return null;
 		}
+	}
+
+	private static JsonPublishRequest buildSQS(String dateString,
+			JSONObject message) throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put("Type", "Notification");
+		json.put("MessageId", UUID.randomUUID().toString());
+		json.put("TopicArn", "arn:aws:sns:us-east-1:00000000000:sensors");
+		json.put("Timestamp", dateString);
+		json.put("SignatureVersion", "0");
+		json.put("Signature", "NOT_SET");
+		json.put("SigningCertURL", "NOT_SET");
+		json.put("UnsubscribeURL", "NOT_SET");
+		json.put("Message", message.toString());
+		return new JsonPublishRequest(json.toString());
 	}
 }
