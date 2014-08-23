@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 
@@ -38,6 +39,11 @@ public class DatabaseEventCache {
 	private Map<Integer, List<PersonLocationDetails>> homePeople;
 
 	/**
+	 * the recent location
+	 */
+	private Map<String, PersonLocationRecent> recentLocation;
+
+	/**
 	 * Creates a new instance of the DatabaseEventCache class.
 	 * 
 	 * @param database
@@ -48,6 +54,7 @@ public class DatabaseEventCache {
 		this.locationTokenPerson = new HashMap<String, PersonLocationDetails>();
 		this.deviceDetails = new HashMap<String, SmartThingsDeviceDetails>();
 		this.homePeople = new HashMap<Integer, List<PersonLocationDetails>>();
+		this.recentLocation = new HashMap<String, PersonLocationRecent>();
 	}
 
 	/**
@@ -105,6 +112,20 @@ public class DatabaseEventCache {
 		}
 
 		return list;
+	}
+
+	public PersonLocationRecent getRecentLocation(String token) {
+		if (this.recentLocation.containsKey(token)) {
+			return this.recentLocation.get(token);
+		}
+
+		PersonLocationRecent recent = this.database.pl().getRecentLocation(
+				token);
+		if (recent != null) {
+			this.recentLocation.put(token, recent);
+		}
+
+		return recent;
 	}
 
 	/**

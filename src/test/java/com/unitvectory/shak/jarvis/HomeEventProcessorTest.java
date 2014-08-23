@@ -146,12 +146,20 @@ public class HomeEventProcessorTest {
 				.buildContactSmartEvent(new Date(), this.frontDoorId,
 						this.hubId, this.locationId, true));
 		speechList.add("Front Door is open... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Front Door is open... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Front Door is open... ", PushOverPriority.QUIET));
 
 		// Close the front door
 		processor.processEvent(RequestGenerator.buildContactSmartEvent(
 				new Date(), this.frontDoorId, this.hubId, this.locationId,
 				false));
 		speechList.add("Front Door is closed... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Front Door is closed... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Front Door is closed... ", PushOverPriority.QUIET));
 
 		// Open the back door
 		processor
@@ -159,12 +167,20 @@ public class HomeEventProcessorTest {
 						new Date(), this.backDoorId, this.hubId,
 						this.locationId, true));
 		speechList.add("Back Door is open... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Back Door is open... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Back Door is open... ", PushOverPriority.QUIET));
 
 		// Close the back door
 		processor.processEvent(RequestGenerator
 				.buildContactSmartEvent(new Date(), this.backDoorId,
 						this.hubId, this.locationId, false));
 		speechList.add("Back Door is closed... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Back Door is closed... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Back Door is closed... ", PushOverPriority.QUIET));
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);

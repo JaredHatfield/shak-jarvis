@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
@@ -51,8 +53,30 @@ public class SmartContactAction extends SmartAction {
 			sb.append("unknown... ");
 		}
 
+		String message = sb.toString();
+
+		// PushToSpeech Notification
 		notifications.add(ActionNotification.buildPushToSpeech("CONTACT",
-				sb.toString(), true, details.getHome()));
+				message, true, details.getHome()));
+
+		// PushOver Notifications
+		List<PersonLocationDetails> homePeople = cache.getPeople(details
+				.getHome());
+		for (PersonLocationDetails homePerson : homePeople) {
+			if (homePerson.getPushOver() == null) {
+				continue;
+			}
+
+			PersonLocationRecent location = cache.getRecentLocation(homePerson
+					.getToken());
+			if (location != null && location.getLocation().equals("home")
+					&& location.getStatus() == 'P') {
+				continue;
+			}
+
+			notifications.add(ActionNotification.buildPushOver("CONTACT",
+					message, true, homePerson.getPushOver()));
+		}
 
 		return notifications;
 	}
