@@ -5,11 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -34,6 +40,77 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 */
 	public PersonLocationDatabase(BasicDataSource ds) {
 		super(ds);
+	}
+
+	private static final String RecentLocationQuery = "SELECT l.name location, "
+			+ "r.status, r.occurred "
+			+ "FROM person p "
+			+ "JOIN person_location_recent r ON p.id = r.person "
+			+ "JOIN person_place l ON r.place = l.id "
+			+ "WHERE p.token = ? ORDER BY r.occurred DESC LIMIT 1 ";
+
+	public PersonLocationRecent getRecentLocation(String token) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = this.getConnection();
+			stmt = con.prepareStatement(RecentLocationQuery);
+			stmt.setString(1, token);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				String location = rs.getString("location");
+				char status = rs.getString("status").charAt(0);
+				Calendar calendar = Calendar.getInstance(TimeZone
+						.getTimeZone("UTC"));
+				calendar.setTimeInMillis(rs.getTimestamp("occurred").getTime());
+				Date occurred = calendar.getTime();
+				return new PersonLocationRecent(token, location, status,
+						occurred);
+			}
+
+			return null;
+		} catch (SQLException e) {
+			log.error("Unable to get person id", e);
+			return null;
+		} finally {
+			this.closeEverything(con, stmt, rs);
+		}
+	}
+
+	/**
+	 * the person list query
+	 */
+	private static final String PersonListQuery = "SELECT token, firstName, lastName, pushover "
+			+ "FROM person WHERE home = ? ORDER BY lastName, firstName, token ";
+
+	public List<PersonLocationDetails> getPeople(int home) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = this.getConnection();
+			stmt = con.prepareStatement(PersonListQuery);
+			stmt.setInt(1, home);
+			rs = stmt.executeQuery();
+			List<PersonLocationDetails> list = new ArrayList<PersonLocationDetails>();
+			while (rs.next()) {
+				String token = rs.getString("token");
+				String firstName = rs.getString("firstName");
+				String lastName = rs.getString("lastName");
+				String pushover = rs.getString("pushover");
+				PersonLocationDetails person = new PersonLocationDetails(token,
+						firstName, lastName, home, pushover);
+				list.add(person);
+			}
+
+			return list;
+		} catch (SQLException e) {
+			log.error("Unable to get person id", e);
+			return null;
+		} finally {
+			this.closeEverything(con, stmt, rs);
+		}
 	}
 
 	/**

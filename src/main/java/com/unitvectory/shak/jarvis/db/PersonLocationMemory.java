@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
+import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -20,9 +21,27 @@ public class PersonLocationMemory implements PersonLocationDAO {
 
 	private List<PersonLocationPublish> locations;
 
+	private Map<String, PersonLocationRecent> recent;
+
 	public PersonLocationMemory() {
 		this.people = new HashMap<String, PersonLocationDetails>();
 		this.locations = new ArrayList<PersonLocationPublish>();
+		this.recent = new HashMap<String, PersonLocationRecent>();
+	}
+
+	public PersonLocationRecent getRecentLocation(String token) {
+		return this.recent.get(token);
+	}
+
+	public List<PersonLocationDetails> getPeople(int home) {
+		List<PersonLocationDetails> list = new ArrayList<PersonLocationDetails>();
+		for (PersonLocationDetails person : this.people.values()) {
+			if (person.getHome() == home) {
+				list.add(person);
+			}
+		}
+
+		return list;
 	}
 
 	public PersonLocationDetails getPerson(String token) {
@@ -32,10 +51,13 @@ public class PersonLocationMemory implements PersonLocationDAO {
 	}
 
 	public InsertResult insertLocation(PersonLocationPublish publish) {
-		// TODO: This is a horrible analog to the necessary data structure for
-		// this interface
 		synchronized (this) {
 			this.locations.add(publish);
+			this.recent.put(
+					publish.getToken(),
+					new PersonLocationRecent(publish.getToken(), publish
+							.getLocation(), publish.getStatus(), publish
+							.getDate()));
 			return InsertResult.Success;
 		}
 	}
@@ -45,5 +67,4 @@ public class PersonLocationMemory implements PersonLocationDAO {
 			this.people.put(details.getToken(), details);
 		}
 	}
-
 }
