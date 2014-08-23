@@ -51,8 +51,8 @@ public class SmartContactAction extends SmartAction {
 			sb.append("unknown... ");
 		}
 
-		notifications.add(new ActionNotification("CONTACT", sb.toString(),
-				true, details.getHome()));
+		notifications.add(ActionNotification.buildPushToSpeech("CONTACT",
+				sb.toString(), true, details.getHome()));
 
 		return notifications;
 	}

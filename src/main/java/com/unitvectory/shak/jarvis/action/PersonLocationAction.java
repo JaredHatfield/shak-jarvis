@@ -54,8 +54,27 @@ public class PersonLocationAction {
 
 		sb.append(event.getLocation());
 		sb.append("... ");
-		notifications.add(new ActionNotification("LOCATION", sb.toString(),
-				true, person.getHome()));
+		String message = sb.toString();
+
+		// PushToSpeech Notification
+		notifications.add(ActionNotification.buildPushToSpeech("LOCATION",
+				message, true, person.getHome()));
+
+		// PushOver Notifications
+		List<PersonLocationDetails> homePeople = cache.getPeople(person
+				.getHome());
+		for (PersonLocationDetails homePerson : homePeople) {
+			if (homePerson.getPushOver() == null) {
+				continue;
+			}
+
+			if (homePerson.getToken().equals(person.getToken())) {
+				continue;
+			}
+
+			notifications.add(ActionNotification.buildPushOver("LOCATION",
+					message, true, homePerson.getPushOver()));
+		}
 
 		return notifications;
 	}

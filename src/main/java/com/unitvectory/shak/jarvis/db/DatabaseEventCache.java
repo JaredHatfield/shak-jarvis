@@ -2,6 +2,7 @@ package com.unitvectory.shak.jarvis.db;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
@@ -32,6 +33,11 @@ public class DatabaseEventCache {
 	private Map<String, SmartThingsDeviceDetails> deviceDetails;
 
 	/**
+	 * the home people
+	 */
+	private Map<Integer, List<PersonLocationDetails>> homePeople;
+
+	/**
 	 * Creates a new instance of the DatabaseEventCache class.
 	 * 
 	 * @param database
@@ -41,6 +47,7 @@ public class DatabaseEventCache {
 		this.database = database;
 		this.locationTokenPerson = new HashMap<String, PersonLocationDetails>();
 		this.deviceDetails = new HashMap<String, SmartThingsDeviceDetails>();
+		this.homePeople = new HashMap<Integer, List<PersonLocationDetails>>();
 	}
 
 	/**
@@ -83,6 +90,21 @@ public class DatabaseEventCache {
 
 		this.deviceDetails.put(key, details);
 		return details;
+	}
+
+	public List<PersonLocationDetails> getPeople(int home) {
+		Integer key = new Integer(home);
+		if (this.homePeople.containsKey(key)) {
+			return this.homePeople.get(key);
+		}
+
+		List<PersonLocationDetails> list = null;
+		list = this.database.pl().getPeople(home);
+		if (list != null) {
+			this.homePeople.put(key, list);
+		}
+
+		return list;
 	}
 
 	/**

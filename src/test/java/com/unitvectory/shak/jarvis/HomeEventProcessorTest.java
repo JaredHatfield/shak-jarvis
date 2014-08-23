@@ -19,6 +19,7 @@ import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.model.RequestGenerator;
 import com.unitvectory.shak.jarvis.pushover.PushOverFake;
 import com.unitvectory.shak.jarvis.pushover.PushOverFakeMessage;
+import com.unitvectory.shak.jarvis.pushover.PushOverPriority;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechFake;
 
 /**
@@ -69,57 +70,76 @@ public class HomeEventProcessorTest {
 	public void locationTest() {
 		HomeEventProcessor processor = this.getProcessor();
 		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
 
 		// John Left home
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.johnToken, "home", 'N'));
 		speechList.add("John has left home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John has left home... ", PushOverPriority.QUIET));
 
 		// Jane Left home
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.janeToken, "home", 'N'));
 		speechList.add("Jane has left home... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane has left home... ", PushOverPriority.QUIET));
 
 		// Jane At work
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.janeToken, "work", 'P'));
 		speechList.add("Jane is arriving at work... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane is arriving at work... ", PushOverPriority.QUIET));
 
 		// John At work
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.johnToken, "work", 'P'));
 		speechList.add("John is arriving at work... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John is arriving at work... ", PushOverPriority.QUIET));
 
 		// John Left work
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.johnToken, "work", 'N'));
 		speechList.add("John has left work... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John has left work... ", PushOverPriority.QUIET));
 
 		// Jane Left work
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.janeToken, "work", 'N'));
 		speechList.add("Jane has left work... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane has left work... ", PushOverPriority.QUIET));
 
 		// John At home
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.johnToken, "home", 'P'));
 		speechList.add("John is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John is arriving home... ", PushOverPriority.QUIET));
 
 		// Jane At home
 		processor.processEvent(RequestGenerator.buildLocation(new Date(),
 				this.janeToken, "home", 'P'));
 		speechList.add("Jane is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane is arriving home... ", PushOverPriority.QUIET));
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);
-		String[] notification = {};
-		this.verify(processor, speech, notification);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
 	}
 
 	@Test
 	public void contactTest() {
 		HomeEventProcessor processor = this.getProcessor();
 		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
 
 		// Open the front door
 		processor.processEvent(RequestGenerator
@@ -148,8 +168,9 @@ public class HomeEventProcessorTest {
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);
-		String[] notification = {};
-		this.verify(processor, speech, notification);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
 	}
 
 	private HomeEventProcessor getProcessor() {
@@ -182,7 +203,7 @@ public class HomeEventProcessorTest {
 	}
 
 	private void verify(HomeEventProcessor processor, String[] expectedSpeech,
-			String[] expectedNotification) {
+			PushOverFakeMessage[] expectedNotification) {
 		assertNotNull(expectedSpeech);
 		PushToSpeechFake pushToSpeech = (PushToSpeechFake) processor
 				.getPushToSpeech();
@@ -198,8 +219,13 @@ public class HomeEventProcessorTest {
 		List<PushOverFakeMessage> notifications = pushOver.getMessages();
 		assertEquals(expectedNotification.length, notifications.size());
 		for (int i = 0; i < expectedNotification.length; i++) {
-			assertEquals(expectedNotification[i], notifications.get(i)
-					.getText());
+			assertEquals(expectedNotification[i].getUser(), notifications
+					.get(i).getUser());
+			assertEquals(expectedNotification[i].getText(), notifications
+					.get(i).getText());
+			assertEquals(expectedNotification[i].getPriority(), notifications
+					.get(i).getPriority());
+
 		}
 	}
 

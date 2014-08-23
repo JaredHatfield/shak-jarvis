@@ -29,7 +29,23 @@ public class ActionNotification {
 	private int home;
 
 	/**
+	 * the push flag
+	 */
+	private boolean push;
+
+	/**
+	 * the PushOver token
+	 */
+	private String pushOverToken;
+
+	/**
 	 * Creates a new instance of the ActionNotification class.
+	 */
+	private ActionNotification() {
+	}
+
+	/**
+	 * Builds a push to speech notification
 	 * 
 	 * @param event
 	 *            the event
@@ -40,12 +56,36 @@ public class ActionNotification {
 	 * @param home
 	 *            the home id
 	 */
-	public ActionNotification(String event, String notification, boolean speak,
-			int home) {
-		this.event = event;
-		this.notification = notification;
-		this.speak = speak;
-		this.home = home;
+	public static ActionNotification buildPushToSpeech(String event,
+			String notification, boolean speak, int home) {
+		ActionNotification action = new ActionNotification();
+		action.event = event;
+		action.notification = notification;
+		action.speak = speak;
+		action.home = home;
+		return action;
+	}
+
+	/**
+	 * Builds a PushOver notification
+	 * 
+	 * @param event
+	 *            the event
+	 * @param notification
+	 *            the notification
+	 * @param push
+	 *            the push flag
+	 * @param pushOverToken
+	 *            the PushOver token
+	 */
+	public static ActionNotification buildPushOver(String event,
+			String notification, boolean push, String pushOverToken) {
+		ActionNotification action = new ActionNotification();
+		action.event = event;
+		action.notification = notification;
+		action.push = push;
+		action.pushOverToken = pushOverToken;
+		return action;
 	}
 
 	/**
@@ -82,6 +122,20 @@ public class ActionNotification {
 	 */
 	public int getHome() {
 		return home;
+	}
+
+	/**
+	 * @return the push
+	 */
+	public boolean isPush() {
+		return push;
+	}
+
+	/**
+	 * @return the pushOverToken
+	 */
+	public String getPushOverToken() {
+		return pushOverToken;
 	}
 
 	/*

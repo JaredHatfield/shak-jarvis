@@ -20,6 +20,7 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
 import com.unitvectory.shak.jarvis.pushover.PushOver;
+import com.unitvectory.shak.jarvis.pushover.PushOverPriority;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeech;
 
 /**
@@ -128,14 +129,19 @@ public class HomeEventProcessor {
 		for (ActionNotification notification : notifications) {
 			log.info(notification);
 
-			List<String> deviceIds = this.database.pts().getPushDeviceIds(
-					notification.getHome());
-			if (deviceIds == null) {
-				continue;
-			}
+			if (this.pushover != null & notification.isPush()) {
+				// Send PushOver
+				this.pushover.sendMessage(notification.getPushOverToken(),
+						notification.getNotification(), PushOverPriority.QUIET);
+			} else if (notification.isSpeak()) {
+				// Sent PushToSpeech
+				List<String> deviceIds = this.database.pts().getPushDeviceIds(
+						notification.getHome());
+				if (deviceIds == null) {
+					continue;
+				}
 
-			for (String deviceid : deviceIds) {
-				if (notification.isSpeak()) {
+				for (String deviceid : deviceIds) {
 					this.pushToSpeech.speak(deviceid,
 							notification.getNotification());
 				}
