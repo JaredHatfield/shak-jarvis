@@ -9,6 +9,11 @@ package com.unitvectory.shak.jarvis.db.model;
 public class PersonLocationDetails {
 
 	/**
+	 * the token
+	 */
+	private String token;
+
+	/**
 	 * the first name
 	 */
 	private String firstName;
@@ -31,6 +36,8 @@ public class PersonLocationDetails {
 	/**
 	 * Creates a new instance of the PersonLocationDetails class.
 	 * 
+	 * @param token
+	 *            the token
 	 * @param firstName
 	 *            the first name
 	 * @param lastName
@@ -40,12 +47,20 @@ public class PersonLocationDetails {
 	 * @param pushOver
 	 *            the push over
 	 */
-	public PersonLocationDetails(String firstName, String lastName, int home,
-			String pushOver) {
+	public PersonLocationDetails(String token, String firstName,
+			String lastName, int home, String pushOver) {
+		this.token = token;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.home = home;
 		this.pushOver = pushOver;
+	}
+
+	/**
+	 * @return the token
+	 */
+	public String getToken() {
+		return token;
 	}
 
 	/**

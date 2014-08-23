@@ -55,8 +55,8 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 				String lastName = rs.getString("lastName");
 				int home = rs.getInt("home");
 				String pushover = rs.getString("pushover");
-				return new PersonLocationDetails(firstName, lastName, home,
-						pushover);
+				return new PersonLocationDetails(token, firstName, lastName,
+						home, pushover);
 			}
 
 			return null;
