@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -80,15 +81,15 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 		}
 
 		InsertResult historyResult = this.insertLocationEvent(person, place,
-				publish.getStatus());
+				publish.getStatus(), publish.getTimestamp());
 		switch (historyResult) {
 		case Duplicate:
 			return InsertResult.Duplicate;
 		case Error:
 			return InsertResult.Error;
 		case Success:
-			return this
-					.insertLocationRecent(person, place, publish.getStatus());
+			return this.insertLocationRecent(person, place,
+					publish.getStatus(), publish.getTimestamp());
 		default:
 			return InsertResult.Error;
 		}
@@ -98,7 +99,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 * the insert person location event query
 	 */
 	private static final String InsertPersonLocationEventQuery = "INSERT INTO person_location_event "
-			+ "(person, place, status, occurred) " + "VALUES (?,?,?,NOW()) ";
+			+ "(person, place, status, occurred) " + "VALUES (?,?,?,?) ";
 
 	/**
 	 * Inserts the location event
@@ -109,9 +110,12 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 *            the place id
 	 * @param status
 	 *            the status
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the result
 	 */
-	private InsertResult insertLocationEvent(int person, int place, char status) {
+	private InsertResult insertLocationEvent(int person, int place,
+			char status, Timestamp timestamp) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
@@ -120,6 +124,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt.setInt(1, person);
 			stmt.setInt(2, place);
 			stmt.setString(3, status + "");
+			stmt.setTimestamp(4, timestamp);
 			stmt.execute();
 			return InsertResult.Success;
 		} catch (SQLException e) {
@@ -135,9 +140,9 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 */
 	private static final String InsertPersonLocationRecentQuery = "INSERT INTO person_location_recent "
 			+ "(person, place, status, occurred) "
-			+ "VALUES (?,?,?,NOW()) "
+			+ "VALUES (?,?,?,?) "
 			+ "ON DUPLICATE KEY UPDATE place = VALUES(place), "
-			+ "status = VALUES(status), occurred = NOW()";
+			+ "status = VALUES(status), occurred = VALUES(occurred) ";
 
 	/**
 	 * Inserts the location recent
@@ -148,9 +153,12 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 *            the place id
 	 * @param status
 	 *            the status
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the result
 	 */
-	private InsertResult insertLocationRecent(int person, int place, char status) {
+	private InsertResult insertLocationRecent(int person, int place,
+			char status, Timestamp timestamp) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
@@ -159,6 +167,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt.setInt(1, person);
 			stmt.setInt(2, place);
 			stmt.setString(3, status + "");
+			stmt.setTimestamp(4, timestamp);
 			stmt.execute();
 			return InsertResult.Success;
 		} catch (SQLException e) {

@@ -1,5 +1,10 @@
 package com.unitvectory.shak.jarvis.model;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * The person location publish
  * 
@@ -29,6 +34,11 @@ public class PersonLocationPublish {
 	private char status;
 
 	/**
+	 * the date
+	 */
+	private Date date;
+
+	/**
 	 * Creates a new instance of the PersonLocationPublish class.
 	 * 
 	 * @param publish
@@ -43,6 +53,18 @@ public class PersonLocationPublish {
 			status = ' ';
 		} else {
 			status = statusString.charAt(0);
+		}
+
+		String dateString = publish.getData().get("date");
+		if (dateString == null) {
+			this.date = new Date();
+		} else {
+			try {
+				this.date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+						.parse(dateString);
+			} catch (ParseException e) {
+				this.date = new Date();
+			}
 		}
 	}
 
@@ -72,6 +94,23 @@ public class PersonLocationPublish {
 	 */
 	public char getStatus() {
 		return status;
+	}
+
+	/**
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * Gets the timestamp
+	 * 
+	 * @return the timestamp
+	 */
+	public Timestamp getTimestamp() {
+		java.sql.Date sqlDate = new java.sql.Date(this.date.getTime());
+		return new Timestamp(sqlDate.getTime());
 	}
 
 	/*
