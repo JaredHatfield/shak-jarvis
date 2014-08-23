@@ -16,7 +16,6 @@ import com.unitvectory.shak.jarvis.db.PushToSpeechMemory;
 import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.db.SmartThingsMemory;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
-import com.unitvectory.shak.jarvis.model.JsonPublishRequest;
 import com.unitvectory.shak.jarvis.model.RequestGenerator;
 import com.unitvectory.shak.jarvis.pushover.PushOverFake;
 import com.unitvectory.shak.jarvis.pushover.PushOverFakeMessage;
@@ -38,6 +37,8 @@ public class HomeEventProcessorTest {
 
 	private String frontDoorId;
 
+	private String backDoorId;
+
 	private int home;
 
 	private String johnToken;
@@ -55,6 +56,7 @@ public class HomeEventProcessorTest {
 		this.hubId = this.getUUID();
 		this.locationId = this.getUUID();
 		this.frontDoorId = this.getUUID();
+		this.backDoorId = this.getUUID();
 		this.home = random.nextInt();
 		this.pushDeviceId = this.getUUID();
 		this.johnToken = this.getUUID();
@@ -117,22 +119,35 @@ public class HomeEventProcessorTest {
 	@Test
 	public void contactTest() {
 		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
 
-		// Open the door
-		JsonPublishRequest requestOpen = RequestGenerator
+		// Open the front door
+		processor.processEvent(RequestGenerator
 				.buildContactSmartEvent(new Date(), this.frontDoorId,
-						this.hubId, this.locationId, true);
-		processor.processEvent(requestOpen);
+						this.hubId, this.locationId, true));
+		speechList.add("Front Door is open... ");
 
-		// Close the door
-		JsonPublishRequest requestClose = RequestGenerator
-				.buildContactSmartEvent(new Date(), this.frontDoorId,
-						this.hubId, this.locationId, false);
-		processor.processEvent(requestClose);
+		// Close the front door
+		processor.processEvent(RequestGenerator.buildContactSmartEvent(
+				new Date(), this.frontDoorId, this.hubId, this.locationId,
+				false));
+		speechList.add("Front Door is closed... ");
+
+		// Open the back door
+		processor
+				.processEvent(RequestGenerator.buildContactSmartEvent(
+						new Date(), this.backDoorId, this.hubId,
+						this.locationId, true));
+		speechList.add("Back Door is open... ");
+
+		// Close the back door
+		processor.processEvent(RequestGenerator
+				.buildContactSmartEvent(new Date(), this.backDoorId,
+						this.hubId, this.locationId, false));
+		speechList.add("Back Door is closed... ");
 
 		// Verify the output
-		String[] speech = { "Front Door is open... ",
-				"Front Door is closed... " };
+		String[] speech = speechList.toArray(new String[speechList.size()]);
 		String[] notification = {};
 		this.verify(processor, speech, notification);
 	}
@@ -154,6 +169,8 @@ public class HomeEventProcessorTest {
 		SmartThingsMemory st = (SmartThingsMemory) processor.getDatabase().st();
 		st.insertDeviceDetails(this.frontDoorId, this.locationId, this.hubId,
 				this.home, "Front Door", "Contact", false, false, false);
+		st.insertDeviceDetails(this.backDoorId, this.locationId, this.hubId,
+				this.home, "Back Door", "Contact", false, false, false);
 
 		// Configure the push device
 		PushToSpeechMemory pts = (PushToSpeechMemory) processor.getDatabase()
