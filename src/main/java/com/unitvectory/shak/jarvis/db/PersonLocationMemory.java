@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
@@ -24,7 +25,7 @@ public class PersonLocationMemory implements PersonLocationDAO {
 	private Map<String, PersonLocationRecent> recent;
 
 	public PersonLocationMemory() {
-		this.people = new HashMap<String, PersonLocationDetails>();
+		this.people = new TreeMap<String, PersonLocationDetails>();
 		this.locations = new ArrayList<PersonLocationPublish>();
 		this.recent = new HashMap<String, PersonLocationRecent>();
 	}

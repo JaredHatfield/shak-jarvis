@@ -42,13 +42,13 @@ public class HomeEventProcessorTest {
 
 	private int home;
 
-	private String johnToken;
-
-	private String johnPushOver;
-
 	private String janeToken;
 
 	private String janePushOver;
+
+	private String johnToken;
+
+	private String johnPushOver;
 
 	private String pushDeviceId;
 
@@ -60,10 +60,10 @@ public class HomeEventProcessorTest {
 		this.backDoorId = this.getUUID();
 		this.home = random.nextInt();
 		this.pushDeviceId = this.getUUID();
-		this.johnToken = this.getUUID();
-		this.johnPushOver = this.getUUID();
-		this.janeToken = this.getUUID();
+		this.janeToken = "A-" + this.getUUID();
 		this.janePushOver = this.getUUID();
+		this.johnToken = "B-" + this.getUUID();
+		this.johnPushOver = this.getUUID();
 	}
 
 	@Test
