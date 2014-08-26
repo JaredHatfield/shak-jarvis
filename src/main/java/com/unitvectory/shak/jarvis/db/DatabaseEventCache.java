@@ -99,6 +99,27 @@ public class DatabaseEventCache {
 		return details;
 	}
 
+	public boolean isSomeoneHome(int home) {
+		List<PersonLocationDetails> people = this.getPeople(home);
+		if (people == null) {
+			return false;
+		}
+
+		for (PersonLocationDetails person : people) {
+			PersonLocationRecent location = this.getRecentLocation(person
+					.getToken());
+			if (location == null) {
+				continue;
+			}
+
+			if (location.getLocation().equalsIgnoreCase("home")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public List<PersonLocationDetails> getPeople(int home) {
 		Integer key = new Integer(home);
 		if (this.homePeople.containsKey(key)) {
