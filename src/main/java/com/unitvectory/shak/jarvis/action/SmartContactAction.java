@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
-import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
@@ -64,13 +63,6 @@ public class SmartContactAction extends SmartAction {
 				.getHome());
 		for (PersonLocationDetails homePerson : homePeople) {
 			if (homePerson.getPushOver() == null) {
-				continue;
-			}
-
-			PersonLocationRecent location = cache.getRecentLocation(homePerson
-					.getToken());
-			if (location != null && location.getLocation().equals("home")
-					&& location.getStatus() == 'P') {
 				continue;
 			}
 
