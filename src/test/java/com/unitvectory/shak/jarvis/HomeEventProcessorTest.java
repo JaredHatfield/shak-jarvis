@@ -40,6 +40,10 @@ public class HomeEventProcessorTest {
 
 	private String backDoorId;
 
+	private String frontPorchId;
+
+	private String kitchenId;
+
 	private int home;
 
 	private String janeToken;
@@ -58,6 +62,8 @@ public class HomeEventProcessorTest {
 		this.locationId = this.getUUID();
 		this.frontDoorId = this.getUUID();
 		this.backDoorId = this.getUUID();
+		this.frontPorchId = this.getUUID();
+		this.kitchenId = this.getUUID();
 		this.home = random.nextInt();
 		this.pushDeviceId = this.getUUID();
 		this.janeToken = "A-" + this.getUUID();
@@ -189,12 +195,36 @@ public class HomeEventProcessorTest {
 		this.verify(processor, speech, push);
 	}
 
+	@Test
+	public void motionTest() {
+		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
+
+		// Front porch motion
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				new Date(), this.frontPorchId, this.hubId, this.locationId,
+				true));
+		speechList.add("Front Porch motion... ");
+
+		// Front porch inactive
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				new Date(), this.frontPorchId, this.hubId, this.locationId,
+				false));
+
+		// Verify the output
+		String[] speech = speechList.toArray(new String[speechList.size()]);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
+	}
+
 	private HomeEventProcessor getProcessor() {
 		// New processor
 		HomeEventProcessor processor = new HomeEventProcessor(
 				new ShakDatabase(), new PushToSpeechFake(), new PushOverFake());
 
-		// Configure the person
+		// Configure the people
 		PersonLocationMemory pl = (PersonLocationMemory) processor
 				.getDatabase().pl();
 		pl.insertPerson(new PersonLocationDetails(this.johnToken, "John",
@@ -202,12 +232,18 @@ public class HomeEventProcessorTest {
 		pl.insertPerson(new PersonLocationDetails(this.janeToken, "Jane",
 				"Doe", this.home, this.janePushOver));
 
-		// Configure the front door
+		// Configure the doors
 		SmartThingsMemory st = (SmartThingsMemory) processor.getDatabase().st();
 		st.insertDeviceDetails(this.frontDoorId, this.locationId, this.hubId,
 				this.home, "Front Door", "Contact", false, false, false);
 		st.insertDeviceDetails(this.backDoorId, this.locationId, this.hubId,
 				this.home, "Back Door", "Contact", false, false, false);
+
+		// Configure the motion sensors
+		st.insertDeviceDetails(this.frontPorchId, this.locationId, this.hubId,
+				this.home, "Front Porch", "Motion", false, true, false);
+		st.insertDeviceDetails(this.kitchenId, this.locationId, this.hubId,
+				this.home, "Front Porch", "Motion", true, false, true);
 
 		// Configure the push device
 		PushToSpeechMemory pts = (PushToSpeechMemory) processor.getDatabase()

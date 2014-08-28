@@ -40,6 +40,12 @@ public class SmartMotionAction extends SmartAction {
 			return notifications.getList();
 		}
 
+		// Outside motion
+		if (motion.getStatus() == 'A' && details.isOutside()) {
+			String message = details.getName() + " motion... ";
+			notifications.speak(details.getHome(), message);
+		}
+
 		return notifications.getList();
 	}
 }
