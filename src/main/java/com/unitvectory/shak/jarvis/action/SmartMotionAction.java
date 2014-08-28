@@ -46,6 +46,16 @@ public class SmartMotionAction extends SmartAction {
 			notifications.speak(details.getHome(), message);
 		}
 
+		// Motion inside when no one is home
+		if (motion.getStatus() == 'A' && details.isInside()
+				&& !cache.isSomeoneHome(details.getHome())) {
+			notifications.speak(details.getHome(), "{VAILED_THREAT}");
+
+			String message = "Unexpected motion in the " + details.getName()
+					+ "... ";
+			notifications.notifyHome(details.getHome(), message);
+		}
+
 		return notifications.getList();
 	}
 }

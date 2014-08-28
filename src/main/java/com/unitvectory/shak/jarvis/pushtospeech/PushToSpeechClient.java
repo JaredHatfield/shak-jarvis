@@ -32,12 +32,19 @@ public class PushToSpeechClient implements PushToSpeech {
 	private static final String BaseUrl = "https://pushtospeech.appspot.com/api/v1";
 
 	/**
+	 * the random text substitution
+	 */
+	private RandomTextSubstitution substitution;
+
+	/**
 	 * Create a new instance of the PushToSpeechClient class.
 	 */
 	public PushToSpeechClient() {
+		this.substitution = new RandomTextSubstitution();
 	}
 
 	public boolean speak(String deviceid, String text) {
+		text = this.substitution.substitute(text);
 		try {
 			// Build the JSON string
 			JSONObject requestJson = new JSONObject();

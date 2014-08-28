@@ -112,7 +112,8 @@ public class DatabaseEventCache {
 				continue;
 			}
 
-			if (location.getLocation().equalsIgnoreCase("home")) {
+			if (location.getLocation().equalsIgnoreCase("home")
+					&& location.getStatus() == 'P') {
 				return true;
 			}
 		}
