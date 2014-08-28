@@ -1,6 +1,5 @@
 package com.unitvectory.shak.jarvis.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
@@ -26,10 +25,11 @@ public class SmartMotionAction extends SmartAction {
 	@Override
 	public List<ActionNotification> getActions(DatabaseEventCache cache,
 			SmartEvent event) {
-		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
+		NotificationBuilder notifications = new NotificationBuilder(cache,
+				"MOTION");
 
 		if (!(event instanceof SmartMotion)) {
-			return notifications;
+			return notifications.getList();
 		}
 
 		SmartMotion motion = (SmartMotion) event;
@@ -37,16 +37,9 @@ public class SmartMotionAction extends SmartAction {
 		SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
 
 		if (details == null) {
-			return notifications;
+			return notifications.getList();
 		}
 
-		if (motion.getStatus() == 'A') {
-			notifications
-					.add(ActionNotification.buildPushToSpeech("MOTION",
-							"Motion in " + details.getName(), false,
-							details.getHome()));
-		}
-
-		return notifications;
+		return notifications.getList();
 	}
 }

@@ -1,10 +1,8 @@
 package com.unitvectory.shak.jarvis.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
-import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
@@ -27,10 +25,11 @@ public class SmartContactAction extends SmartAction {
 	@Override
 	public List<ActionNotification> getActions(DatabaseEventCache cache,
 			SmartEvent event) {
-		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
+		NotificationBuilder notifications = new NotificationBuilder(cache,
+				"CONTACT");
 
 		if (!(event instanceof SmartContact)) {
-			return notifications;
+			return notifications.getList();
 		}
 
 		SmartContact contact = (SmartContact) event;
@@ -38,7 +37,7 @@ public class SmartContactAction extends SmartAction {
 		SmartThingsDeviceDetails details = cache.getDeviceDetails(event);
 
 		if (details == null) {
-			return notifications;
+			return notifications.getList();
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -55,21 +54,11 @@ public class SmartContactAction extends SmartAction {
 		String message = sb.toString();
 
 		// PushToSpeech Notification
-		notifications.add(ActionNotification.buildPushToSpeech("CONTACT",
-				message, true, details.getHome()));
+		notifications.speak(details.getHome(), message);
 
 		// PushOver Notifications
-		List<PersonLocationDetails> homePeople = cache.getPeople(details
-				.getHome());
-		for (PersonLocationDetails homePerson : homePeople) {
-			if (homePerson.getPushOver() == null) {
-				continue;
-			}
+		notifications.notifyHome(details.getHome(), message);
 
-			notifications.add(ActionNotification.buildPushOver("CONTACT",
-					message, true, homePerson.getPushOver()));
-		}
-
-		return notifications;
+		return notifications.getList();
 	}
 }

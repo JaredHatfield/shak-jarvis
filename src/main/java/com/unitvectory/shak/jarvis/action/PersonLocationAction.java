@@ -1,6 +1,5 @@
 package com.unitvectory.shak.jarvis.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
@@ -32,11 +31,12 @@ public class PersonLocationAction {
 	 */
 	public List<ActionNotification> getActions(DatabaseEventCache cache,
 			PersonLocationPublish event) {
-		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
+		NotificationBuilder notifications = new NotificationBuilder(cache,
+				"LOCATION");
 
 		PersonLocationDetails person = cache.getPerson(event.getToken());
 		if (person == null) {
-			return notifications;
+			return notifications.getList();
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -57,25 +57,11 @@ public class PersonLocationAction {
 		String message = sb.toString();
 
 		// PushToSpeech Notification
-		notifications.add(ActionNotification.buildPushToSpeech("LOCATION",
-				message, true, person.getHome()));
+		notifications.speak(person.getHome(), message);
 
 		// PushOver Notifications
-		List<PersonLocationDetails> homePeople = cache.getPeople(person
-				.getHome());
-		for (PersonLocationDetails homePerson : homePeople) {
-			if (homePerson.getPushOver() == null) {
-				continue;
-			}
+		notifications.notifyHome(person.getHome(), message, person.getToken());
 
-			if (homePerson.getToken().equals(person.getToken())) {
-				continue;
-			}
-
-			notifications.add(ActionNotification.buildPushOver("LOCATION",
-					message, true, homePerson.getPushOver()));
-		}
-
-		return notifications;
+		return notifications.getList();
 	}
 }

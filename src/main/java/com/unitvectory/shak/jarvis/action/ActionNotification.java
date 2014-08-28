@@ -1,7 +1,7 @@
 package com.unitvectory.shak.jarvis.action;
 
 /**
- * The action notificationJ
+ * The action notification
  * 
  * @author Jared Hatfield
  * 
