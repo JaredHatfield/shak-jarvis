@@ -31,7 +31,7 @@ public class SmartThingsMemory implements SmartThingsDAO {
 
 	public InsertResult insertSmartEvent(SmartEvent event) {
 		synchronized (this) {
-			String id = this.getEventId(event);
+			String id = event.getCacheId();
 
 			// Track the previous event
 			SmartEvent previous = this.recentEvent.get(id);
@@ -47,14 +47,22 @@ public class SmartThingsMemory implements SmartThingsDAO {
 
 	public SmartThingsDeviceDetails getDeviceDetails(SmartEvent event)
 			throws SQLException {
+		if (event == null) {
+			return null;
+		}
+
 		synchronized (this) {
-			return this.devices.get(this.getEventId(event));
+			return this.devices.get(event.getCacheId());
 		}
 	}
 
 	public SmartEvent getPreviousEvent(SmartEvent event) throws SQLException {
+		if (event == null) {
+			return null;
+		}
+
 		synchronized (this) {
-			return this.previousEvent.get(this.getEventId(event));
+			return this.previousEvent.get(event.getCacheId());
 		}
 	}
 
@@ -69,12 +77,5 @@ public class SmartThingsMemory implements SmartThingsDAO {
 			id = DigestUtils.sha1Hex(id);
 			this.devices.put(id, details);
 		}
-	}
-
-	private String getEventId(SmartEvent event) {
-		String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
-				+ "/" + event.getHubId();
-		id = DigestUtils.sha1Hex(id);
-		return id;
 	}
 }

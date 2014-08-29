@@ -161,8 +161,7 @@ public class DatabaseEventCache {
 			return null;
 		}
 
-		String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
-				+ "/" + event.getHubId();
+		String id = event.getCacheId();
 		if (this.previousEvent.containsKey(id)) {
 			return this.previousEvent.get(id);
 		}

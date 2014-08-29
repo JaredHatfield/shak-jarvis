@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
 import com.unitvectory.shak.jarvis.exception.SmartException;
@@ -138,6 +139,23 @@ public abstract class SmartEvent {
 			log.error("Unable to parse date " + this.date, e);
 			return null;
 		}
+	}
+
+	/**
+	 * Gets the cache id used to identify the record when cached in memory.
+	 * 
+	 * @return the cache id
+	 */
+	public String getCacheId() {
+		if (this.deviceId == null || this.locationId == null
+				|| this.hubId == null) {
+			return null;
+		}
+
+		String id = "/" + this.deviceId + "/" + this.locationId + "/"
+				+ this.hubId;
+		id = DigestUtils.sha1Hex(id);
+		return id;
 	}
 
 	/**
