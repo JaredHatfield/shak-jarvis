@@ -44,6 +44,11 @@ public class DatabaseEventCache {
 	private Map<String, PersonLocationRecent> recentLocation;
 
 	/**
+	 * the previous events
+	 */
+	private Map<String, SmartEvent> previousEvent;
+
+	/**
 	 * Creates a new instance of the DatabaseEventCache class.
 	 * 
 	 * @param database
@@ -55,6 +60,7 @@ public class DatabaseEventCache {
 		this.deviceDetails = new HashMap<String, SmartThingsDeviceDetails>();
 		this.homePeople = new HashMap<Integer, List<PersonLocationDetails>>();
 		this.recentLocation = new HashMap<String, PersonLocationRecent>();
+		this.previousEvent = new HashMap<String, SmartEvent>();
 	}
 
 	/**
@@ -148,6 +154,30 @@ public class DatabaseEventCache {
 		}
 
 		return recent;
+	}
+
+	public SmartEvent getPreviousEvent(SmartEvent event) {
+		if (event == null) {
+			return null;
+		}
+
+		String id = "/" + event.getDeviceId() + "/" + event.getLocationId()
+				+ "/" + event.getHubId();
+		if (this.previousEvent.containsKey(id)) {
+			return this.previousEvent.get(id);
+		}
+
+		SmartEvent previous = null;
+		try {
+			previous = this.database.st().getPreviousEvent(event);
+		} catch (SQLException e) {
+		}
+
+		if (previous != null) {
+			this.previousEvent.put(id, previous);
+		}
+
+		return previous;
 	}
 
 	/**

@@ -1,9 +1,7 @@
 package com.unitvectory.shak.jarvis.db;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,20 +19,28 @@ public class SmartThingsMemory implements SmartThingsDAO {
 
 	private Map<String, SmartThingsDeviceDetails> devices;
 
-	private List<SmartEvent> history;
-
 	private Map<String, SmartEvent> recentEvent;
+
+	private Map<String, SmartEvent> previousEvent;
 
 	public SmartThingsMemory() {
 		this.devices = new HashMap<String, SmartThingsDeviceDetails>();
-		this.history = new ArrayList<SmartEvent>();
 		this.recentEvent = new HashMap<String, SmartEvent>();
+		this.previousEvent = new HashMap<String, SmartEvent>();
 	}
 
 	public InsertResult insertSmartEvent(SmartEvent event) {
 		synchronized (this) {
-			this.history.add(event);
-			this.recentEvent.put(this.getEventId(event), event);
+			String id = this.getEventId(event);
+
+			// Track the previous event
+			SmartEvent previous = this.recentEvent.get(id);
+			if (previous != null) {
+				this.previousEvent.put(id, previous);
+			}
+
+			// Store the recent event
+			this.recentEvent.put(id, event);
 			return InsertResult.Success;
 		}
 	}
@@ -48,7 +54,7 @@ public class SmartThingsMemory implements SmartThingsDAO {
 
 	public SmartEvent getPreviousEvent(SmartEvent event) throws SQLException {
 		synchronized (this) {
-			return this.recentEvent.get(this.getEventId(event));
+			return this.previousEvent.get(this.getEventId(event));
 		}
 	}
 
