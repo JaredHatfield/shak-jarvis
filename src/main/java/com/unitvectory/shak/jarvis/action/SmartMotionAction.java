@@ -3,6 +3,8 @@ package com.unitvectory.shak.jarvis.action;
 import java.util.Calendar;
 import java.util.List;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
@@ -104,12 +106,11 @@ public class SmartMotionAction extends SmartAction {
 				for (PersonLocationDetails person : leftWork) {
 					PersonLocationRecent location = cache
 							.getRecentLocation(person.getToken());
-					int minutesAgo = (int) ((currentCalendar.getTimeInMillis() - location
-							.getOccurred().getTime()) / (1000 * 60));
+					PrettyTime pt = new PrettyTime(currentCalendar.getTime());
 					sb.append(person.getFirstName());
 					sb.append(" left work ");
-					sb.append(minutesAgo);
-					sb.append(" minutes ago... ");
+					sb.append(pt.format(location.getOccurred()));
+					sb.append("... ");
 				}
 			}
 

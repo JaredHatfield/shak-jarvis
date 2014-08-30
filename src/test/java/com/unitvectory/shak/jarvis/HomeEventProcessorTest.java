@@ -141,20 +141,20 @@ public class HomeEventProcessorTest {
 
 		// Kitchen motion (John arrived home; Jane left work)
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
-				date("2014-08-28 20:07:00"), this.kitchenId, this.hubId,
+				date("2014-08-28 20:10:30"), this.kitchenId, this.hubId,
 				this.locationId, true));
-		speechList.add("Welcome home John... Jane left work 2 minutes ago... ");
+		speechList.add("Welcome home John... Jane left work 5 minutes ago... ");
 
 		// Jane At home
 		processor.processEvent(RequestGenerator.buildLocation(
-				date("2014-08-28 20:08:00"), this.janeToken, "home", 'P'));
+				date("2014-08-28 20:19:00"), this.janeToken, "home", 'P'));
 		speechList.add("Jane is arriving home... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane is arriving home... ", PushOverPriority.QUIET));
 
 		// Kitchen motion (Jane arrived home)
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
-				date("2014-08-28 20:03:00"), this.kitchenId, this.hubId,
+				date("2014-08-28 20:20:00"), this.kitchenId, this.hubId,
 				this.locationId, true));
 		speechList.add("Welcome home Jane... ");
 
