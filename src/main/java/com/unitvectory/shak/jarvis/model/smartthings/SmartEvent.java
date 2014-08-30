@@ -133,8 +133,10 @@ public abstract class SmartEvent {
 	 */
 	public Timestamp getTimestamp() {
 		try {
-			java.util.Date utilDate = new SimpleDateFormat(
-					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(this.date);
+			SimpleDateFormat df = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			java.util.Date utilDate = df.parse(this.date);
 			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 			return new Timestamp(sqlDate.getTime());
 		} catch (Exception e) {
@@ -151,8 +153,10 @@ public abstract class SmartEvent {
 	public Calendar getCalendar() {
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		try {
-			java.util.Date utilDate = new SimpleDateFormat(
-					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(this.date);
+			SimpleDateFormat df = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			java.util.Date utilDate = df.parse(this.date);
 			calendar.setTime(utilDate);
 			return calendar;
 		} catch (Exception e) {

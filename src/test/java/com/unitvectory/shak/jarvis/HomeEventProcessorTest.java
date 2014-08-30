@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -157,6 +158,11 @@ public class HomeEventProcessorTest {
 				date("2014-08-28 20:20:00"), this.kitchenId, this.hubId,
 				this.locationId, true));
 		speechList.add("Welcome home Jane... ");
+
+		// More motion
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:30:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);
@@ -338,8 +344,9 @@ public class HomeEventProcessorTest {
 
 	private Date date(String dateString) {
 		try {
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-					.parse(dateString);
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			return df.parse(dateString);
 		} catch (ParseException e) {
 			return null;
 		}

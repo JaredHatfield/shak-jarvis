@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * The person location publish
@@ -60,8 +61,10 @@ public class PersonLocationPublish {
 			this.date = new Date();
 		} else {
 			try {
-				this.date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-						.parse(dateString);
+				SimpleDateFormat df = new SimpleDateFormat(
+						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				df.setTimeZone(TimeZone.getTimeZone("UTC"));
+				this.date = df.parse(dateString);
 			} catch (ParseException e) {
 				this.date = new Date();
 			}

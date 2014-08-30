@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import com.amazonaws.util.json.JSONException;
@@ -49,8 +50,10 @@ public class RequestGenerator {
 	public static JsonPublishRequest buildLocation(Date date, String token,
 			String location, char status) {
 		try {
-			String dateString = new SimpleDateFormat(
-					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date);
+			SimpleDateFormat df = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String dateString = df.format(date);
 
 			JSONObject message = new JSONObject();
 			message.put("auth", "foobar");
@@ -70,8 +73,10 @@ public class RequestGenerator {
 			String deviceId, String hubId, String locationId,
 			Map<String, String> fields) {
 		try {
-			String dateString = new SimpleDateFormat(
-					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date);
+			SimpleDateFormat df = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String dateString = df.format(date);
 
 			JSONObject message = new JSONObject();
 			message.put("auth", "foobar");
