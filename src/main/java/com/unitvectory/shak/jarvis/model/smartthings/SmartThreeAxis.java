@@ -179,7 +179,7 @@ public class SmartThreeAxis extends SmartEvent {
 		String locationId = rs.getString("locationid");
 		String deviceId = rs.getString("deviceid");
 		String eventId = rs.getString("eventid");
-		String occurred = rs.getString("occurred");
+		String occurred = this.formatDate(rs.getDate("occurred"));
 		double valX = rs.getDouble("valX");
 		double valY = rs.getDouble("valY");
 		double valZ = rs.getDouble("valZ");

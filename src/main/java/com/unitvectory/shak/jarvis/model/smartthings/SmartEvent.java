@@ -234,4 +234,19 @@ public abstract class SmartEvent {
 	 */
 	public abstract SmartEvent getPreviousObject(ResultSet rs)
 			throws SQLException, SmartException;
+
+	/**
+	 * Formats a data retrieved from database in standard format.
+	 * 
+	 * @param date
+	 *            the sql date
+	 * @return the standard date string
+	 */
+	protected String formatDate(java.sql.Date date) {
+		SimpleDateFormat df = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		java.util.Date utilDate = new java.util.Date(date.getTime());
+		return df.format(utilDate);
+	}
 }
