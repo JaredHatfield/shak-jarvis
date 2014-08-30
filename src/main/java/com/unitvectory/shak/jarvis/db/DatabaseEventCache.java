@@ -3,6 +3,7 @@ package com.unitvectory.shak.jarvis.db;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,9 +198,10 @@ public class DatabaseEventCache {
 				continue;
 			}
 
+			Date locDate = location.getOccurred();
+			Date comDate = compare.getTime();
 			if (location.getLocation().equalsIgnoreCase("home")
-					&& location.getStatus() == 'P'
-					&& location.getOccurred().after(compare.getTime())) {
+					&& location.getStatus() == 'P' && locDate.after(comDate)) {
 				arriving.add(person);
 			}
 		}

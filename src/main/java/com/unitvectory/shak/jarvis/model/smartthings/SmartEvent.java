@@ -249,8 +249,8 @@ public abstract class SmartEvent {
 	protected String formatDate(java.sql.Timestamp timestamp) {
 		SimpleDateFormat df = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		java.util.Date utilDate = new java.util.Date(timestamp.getTime());
-		return df.format(utilDate);
+		// df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		String str = df.format(timestamp);
+		return str;
 	}
 }

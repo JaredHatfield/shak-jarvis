@@ -6,10 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -61,10 +59,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			while (rs.next()) {
 				String location = rs.getString("location");
 				char status = rs.getString("status").charAt(0);
-				Calendar calendar = Calendar.getInstance(TimeZone
-						.getTimeZone("UTC"));
-				calendar.setTimeInMillis(rs.getTimestamp("occurred").getTime());
-				Date occurred = calendar.getTime();
+				Date occurred = rs.getTimestamp("occurred");
 				return new PersonLocationRecent(token, location, status,
 						occurred);
 			}
