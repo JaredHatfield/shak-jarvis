@@ -244,5 +244,8 @@ public class DatabaseEventCache {
 	public void clear() {
 		this.locationTokenPerson.clear();
 		this.deviceDetails.clear();
+		this.homePeople.clear();
+		this.recentLocation.clear();
+		this.previousEvent.clear();
 	}
 }
