@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
@@ -135,6 +137,24 @@ public abstract class SmartEvent {
 					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(this.date);
 			java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 			return new Timestamp(sqlDate.getTime());
+		} catch (Exception e) {
+			log.error("Unable to parse date " + this.date, e);
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the calendar
+	 * 
+	 * @return the calendar
+	 */
+	public Calendar getCalendar() {
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		try {
+			java.util.Date utilDate = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(this.date);
+			calendar.setTime(utilDate);
+			return calendar;
 		} catch (Exception e) {
 			log.error("Unable to parse date " + this.date, e);
 			return null;

@@ -146,7 +146,7 @@ public class ActionNotification {
 	@Override
 	public String toString() {
 		return "ActionNotification [event=" + event + ", notification="
-				+ notification + ", speak=" + speak + ", home=" + home + "]";
+				+ notification + ", speak=" + speak + ", home=" + home
+				+ ", push=" + push + ", pushOverToken=" + pushOverToken + "]";
 	}
-
 }

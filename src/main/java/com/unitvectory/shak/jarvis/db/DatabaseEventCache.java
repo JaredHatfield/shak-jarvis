@@ -1,9 +1,12 @@
 package com.unitvectory.shak.jarvis.db;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
@@ -177,6 +180,62 @@ public class DatabaseEventCache {
 		}
 
 		return previous;
+	}
+
+	public List<PersonLocationDetails> getPeopleArrivingHome(int home,
+			Calendar compare) {
+		List<PersonLocationDetails> people = this.getPeople(home);
+		List<PersonLocationDetails> arriving = new ArrayList<PersonLocationDetails>();
+		if (people == null) {
+			return arriving;
+		}
+
+		for (PersonLocationDetails person : people) {
+			PersonLocationRecent location = this.getRecentLocation(person
+					.getToken());
+			if (location == null) {
+				continue;
+			}
+
+			if (location.getLocation().equalsIgnoreCase("home")
+					&& location.getStatus() == 'P'
+					&& location.getOccurred().after(compare.getTime())) {
+				arriving.add(person);
+			}
+		}
+
+		return arriving;
+	}
+
+	public List<PersonLocationDetails> getPeopleAt(int home, String loc,
+			char status, Calendar compare) {
+		List<PersonLocationDetails> people = this.getPeople(home);
+		List<PersonLocationDetails> atWork = new ArrayList<PersonLocationDetails>();
+		if (people == null) {
+			return atWork;
+		}
+
+		for (PersonLocationDetails person : people) {
+			PersonLocationRecent location = this.getRecentLocation(person
+					.getToken());
+			if (location == null) {
+				continue;
+			}
+
+			Calendar calendar = Calendar.getInstance(TimeZone
+					.getTimeZone("UTC"));
+			calendar.setTime(location.getOccurred());
+			if (location.getLocation().equalsIgnoreCase(loc)
+					&& location.getStatus() == status
+					&& calendar.get(Calendar.YEAR) == compare
+							.get(Calendar.YEAR)
+					&& calendar.get(Calendar.DAY_OF_YEAR) == compare
+							.get(Calendar.DAY_OF_YEAR)) {
+				atWork.add(person);
+			}
+		}
+
+		return atWork;
 	}
 
 	/**

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,61 +80,83 @@ public class HomeEventProcessorTest {
 		List<String> speechList = new ArrayList<String>();
 		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
 
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 19:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("{VAILED_THREAT}");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+
 		// John Left home
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.johnToken, "home", 'N'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:00:00"), this.johnToken, "home", 'N'));
 		speechList.add("John has left home... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John has left home... ", PushOverPriority.QUIET));
 
 		// Jane Left home
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.janeToken, "home", 'N'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:01:00"), this.janeToken, "home", 'N'));
 		speechList.add("Jane has left home... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane has left home... ", PushOverPriority.QUIET));
 
 		// Jane At work
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.janeToken, "work", 'P'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:02:00"), this.janeToken, "work", 'P'));
 		speechList.add("Jane is arriving at work... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane is arriving at work... ", PushOverPriority.QUIET));
 
 		// John At work
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.johnToken, "work", 'P'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:03:00"), this.johnToken, "work", 'P'));
 		speechList.add("John is arriving at work... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John is arriving at work... ", PushOverPriority.QUIET));
 
 		// John Left work
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.johnToken, "work", 'N'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:00"), this.johnToken, "work", 'N'));
 		speechList.add("John has left work... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John has left work... ", PushOverPriority.QUIET));
 
 		// Jane Left work
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.janeToken, "work", 'N'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:05:00"), this.janeToken, "work", 'N'));
 		speechList.add("Jane has left work... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane has left work... ", PushOverPriority.QUIET));
 
 		// John At home
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.johnToken, "home", 'P'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:06:00"), this.johnToken, "home", 'P'));
 		speechList.add("John is arriving home... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John is arriving home... ", PushOverPriority.QUIET));
 
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:07:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Welcome home John... Jane left work 2 minutes ago... ");
+
 		// Jane At home
-		processor.processEvent(RequestGenerator.buildLocation(new Date(),
-				this.janeToken, "home", 'P'));
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:08:00"), this.janeToken, "home", 'P'));
 		speechList.add("Jane is arriving home... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane is arriving home... ", PushOverPriority.QUIET));
+
+		// Kitchen motion (Jane arrived home)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:03:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Welcome home Jane... ");
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);
@@ -148,9 +172,9 @@ public class HomeEventProcessorTest {
 		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
 
 		// Open the front door
-		processor.processEvent(RequestGenerator
-				.buildContactSmartEvent(new Date(), this.frontDoorId,
-						this.hubId, this.locationId, true));
+		processor.processEvent(RequestGenerator.buildContactSmartEvent(
+				date("2014-08-28 20:00:00"), this.frontDoorId, this.hubId,
+				this.locationId, true));
 		speechList.add("Front Door is open... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"Front Door is open... ", PushOverPriority.QUIET));
@@ -159,8 +183,8 @@ public class HomeEventProcessorTest {
 
 		// Close the front door
 		processor.processEvent(RequestGenerator.buildContactSmartEvent(
-				new Date(), this.frontDoorId, this.hubId, this.locationId,
-				false));
+				date("2014-08-28 20:01:00"), this.frontDoorId, this.hubId,
+				this.locationId, false));
 		speechList.add("Front Door is closed... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"Front Door is closed... ", PushOverPriority.QUIET));
@@ -168,10 +192,9 @@ public class HomeEventProcessorTest {
 				"Front Door is closed... ", PushOverPriority.QUIET));
 
 		// Open the back door
-		processor
-				.processEvent(RequestGenerator.buildContactSmartEvent(
-						new Date(), this.backDoorId, this.hubId,
-						this.locationId, true));
+		processor.processEvent(RequestGenerator.buildContactSmartEvent(
+				date("2014-08-28 20:02:00"), this.backDoorId, this.hubId,
+				this.locationId, true));
 		speechList.add("Back Door is open... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"Back Door is open... ", PushOverPriority.QUIET));
@@ -179,9 +202,9 @@ public class HomeEventProcessorTest {
 				"Back Door is open... ", PushOverPriority.QUIET));
 
 		// Close the back door
-		processor.processEvent(RequestGenerator
-				.buildContactSmartEvent(new Date(), this.backDoorId,
-						this.hubId, this.locationId, false));
+		processor.processEvent(RequestGenerator.buildContactSmartEvent(
+				date("2014-08-28 20:03:00"), this.backDoorId, this.hubId,
+				this.locationId, false));
 		speechList.add("Back Door is closed... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"Back Door is closed... ", PushOverPriority.QUIET));
@@ -201,16 +224,46 @@ public class HomeEventProcessorTest {
 		List<String> speechList = new ArrayList<String>();
 		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
 
+		// Jane At work
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:00:00"), this.janeToken, "work", 'P'));
+		speechList.add("Jane is arriving at work... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane is arriving at work... ", PushOverPriority.QUIET));
+
 		// Front porch motion
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
-				new Date(), this.frontPorchId, this.hubId, this.locationId,
-				true));
+				date("2014-08-28 20:01:00"), this.frontPorchId, this.hubId,
+				this.locationId, true));
 		speechList.add("Front Porch motion... ");
 
 		// Front porch inactive
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
-				new Date(), this.frontPorchId, this.hubId, this.locationId,
-				false));
+				date("2014-08-28 20:02:00"), this.frontPorchId, this.hubId,
+				this.locationId, false));
+
+		// Kitchen motion (no one home)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:03:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("{VAILED_THREAT}");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+
+		// John At home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:00"), this.johnToken, "home", 'P'));
+		speechList.add("John is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John is arriving home... ", PushOverPriority.QUIET));
+
+		// Kitchen motion (someone home)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:05:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Welcome home John... Jane is still at work... ");
 
 		// Verify the output
 		String[] speech = speechList.toArray(new String[speechList.size()]);
@@ -243,7 +296,7 @@ public class HomeEventProcessorTest {
 		st.insertDeviceDetails(this.frontPorchId, this.locationId, this.hubId,
 				this.home, "Front Porch", "Motion", false, true, false);
 		st.insertDeviceDetails(this.kitchenId, this.locationId, this.hubId,
-				this.home, "Front Porch", "Motion", true, false, true);
+				this.home, "Kitchen", "Motion", true, false, true);
 
 		// Configure the push device
 		PushToSpeechMemory pts = (PushToSpeechMemory) processor.getDatabase()
@@ -261,23 +314,34 @@ public class HomeEventProcessorTest {
 				.getPushToSpeech();
 		List<String> speech = pushToSpeech.getHistory(pushDeviceId);
 		assertNotNull(speech);
-		assertEquals(expectedSpeech.length, speech.size());
-		for (int i = 0; i < expectedSpeech.length; i++) {
+		for (int i = 0; i < Math.min(expectedSpeech.length, speech.size()); i++) {
 			assertEquals(expectedSpeech[i], speech.get(i));
 		}
+
+		assertEquals(expectedSpeech.length, speech.size());
 
 		assertNotNull(expectedNotification);
 		PushOverFake pushOver = (PushOverFake) processor.getPushover();
 		List<PushOverFakeMessage> notifications = pushOver.getMessages();
-		assertEquals(expectedNotification.length, notifications.size());
-		for (int i = 0; i < expectedNotification.length; i++) {
+		for (int i = 0; i < Math.min(expectedNotification.length,
+				notifications.size()); i++) {
 			assertEquals(expectedNotification[i].getUser(), notifications
 					.get(i).getUser());
 			assertEquals(expectedNotification[i].getText(), notifications
 					.get(i).getText());
 			assertEquals(expectedNotification[i].getPriority(), notifications
 					.get(i).getPriority());
+		}
 
+		assertEquals(expectedNotification.length, notifications.size());
+	}
+
+	private Date date(String dateString) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+					.parse(dateString);
+		} catch (ParseException e) {
+			return null;
 		}
 	}
 
