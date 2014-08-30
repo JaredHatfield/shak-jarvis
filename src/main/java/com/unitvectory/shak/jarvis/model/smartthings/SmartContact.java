@@ -135,7 +135,7 @@ public class SmartContact extends SmartEvent {
 		String locationId = rs.getString("locationid");
 		String deviceId = rs.getString("deviceid");
 		String eventId = rs.getString("eventid");
-		String occurred = this.formatDate(rs.getDate("occurred"));
+		String occurred = this.formatDate(rs.getTimestamp("occurred"));
 		char status = rs.getString("status").charAt(0);
 		return new SmartContact(hubId, locationId, deviceId, eventId, occurred,
 				status);

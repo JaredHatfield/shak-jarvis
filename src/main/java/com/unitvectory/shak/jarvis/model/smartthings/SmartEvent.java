@@ -242,15 +242,15 @@ public abstract class SmartEvent {
 	/**
 	 * Formats a data retrieved from database in standard format.
 	 * 
-	 * @param date
-	 *            the sql date
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the standard date string
 	 */
-	protected String formatDate(java.sql.Date date) {
+	protected String formatDate(java.sql.Timestamp timestamp) {
 		SimpleDateFormat df = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		java.util.Date utilDate = new java.util.Date(date.getTime());
+		java.util.Date utilDate = new java.util.Date(timestamp.getTime());
 		return df.format(utilDate);
 	}
 }

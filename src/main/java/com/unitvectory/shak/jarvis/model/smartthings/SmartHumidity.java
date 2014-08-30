@@ -135,7 +135,7 @@ public class SmartHumidity extends SmartEvent {
 		String locationId = rs.getString("locationid");
 		String deviceId = rs.getString("deviceid");
 		String eventId = rs.getString("eventid");
-		String occurred = this.formatDate(rs.getDate("occurred"));
+		String occurred = this.formatDate(rs.getTimestamp("occurred"));
 		double value = rs.getDouble("value");
 		return new SmartBattery(hubId, locationId, deviceId, eventId, occurred,
 				value);
