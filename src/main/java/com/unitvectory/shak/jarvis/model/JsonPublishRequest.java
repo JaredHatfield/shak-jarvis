@@ -27,6 +27,11 @@ public class JsonPublishRequest {
 	private Map<String, String> data;
 
 	/**
+	 * The timestamp.
+	 */
+	private String timestamp;
+
+	/**
 	 * The valid request.
 	 */
 	private boolean valid;
@@ -71,6 +76,13 @@ public class JsonPublishRequest {
 	}
 
 	/**
+	 * @return the timestamp
+	 */
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	/**
 	 * @return the valid
 	 */
 	public boolean isValid() {
@@ -102,6 +114,7 @@ public class JsonPublishRequest {
 
 			// Parse the message JSON
 			String snsMessage = snsObject.getString("Message");
+			this.timestamp = snsObject.getString("Timestamp");
 
 			JSONObject payloadObject = new JSONObject(snsMessage);
 

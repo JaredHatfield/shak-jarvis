@@ -58,16 +58,16 @@ public class PersonLocationPublish {
 
 		String dateString = publish.getData().get("date");
 		if (dateString == null) {
+			dateString = publish.getTimestamp();
+		}
+
+		try {
+			SimpleDateFormat df = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			this.date = df.parse(dateString);
+		} catch (ParseException e) {
 			this.date = new Date();
-		} else {
-			try {
-				SimpleDateFormat df = new SimpleDateFormat(
-						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-				df.setTimeZone(TimeZone.getTimeZone("UTC"));
-				this.date = df.parse(dateString);
-			} catch (ParseException e) {
-				this.date = new Date();
-			}
 		}
 	}
 
