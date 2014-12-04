@@ -4,7 +4,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
@@ -53,7 +53,7 @@ public class PushToSpeechClient implements PushToSpeech {
 			String jsonString = requestJson.toString();
 
 			// Send the HTTP request
-			HttpClient httpClient = new DefaultHttpClient();
+			HttpClient httpClient = HttpClientBuilder.create().build();
 			HttpPost postRequest = new HttpPost(BaseUrl + "/speech");
 			StringEntity input = new StringEntity(jsonString);
 			input.setContentType("application/json;charset=UTF-8");

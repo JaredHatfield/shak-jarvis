@@ -8,7 +8,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,7 @@ public class PushOverClient implements PushOver {
 	public boolean sendMessage(String user, String message,
 			PushOverPriority priority) {
 		try {
-			HttpClient client = new DefaultHttpClient();
+			HttpClient client = HttpClientBuilder.create().build();
 			HttpPost post = new HttpPost(URL);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("token", this.token));
