@@ -43,13 +43,14 @@ public class PushToSpeechClient implements PushToSpeech {
 		this.substitution = new RandomTextSubstitution();
 	}
 
-	public boolean speak(String deviceid, String text) {
-		text = this.substitution.substitute(text);
+	public PushToSpeechResult speak(String deviceid, String text) {
+		String outText = this.substitution.substitute(text);
+		boolean result;
 		try {
 			// Build the JSON string
 			JSONObject requestJson = new JSONObject();
 			requestJson.put("deviceid", deviceid);
-			requestJson.put("text", text);
+			requestJson.put("text", outText);
 			String jsonString = requestJson.toString();
 
 			// Send the HTTP request
@@ -64,10 +65,12 @@ public class PushToSpeechClient implements PushToSpeech {
 			postRequest.setEntity(input);
 
 			HttpResponse response = httpClient.execute(postRequest);
-			return response.getStatusLine().getStatusCode() == 200;
+			result = response.getStatusLine().getStatusCode() == 200;
 		} catch (Exception e) {
 			log.error("Push to Speech API call failed.", e);
-			return false;
+			result = false;
 		}
+
+		return new PushToSpeechResult(result, text, outText);
 	}
 }

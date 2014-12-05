@@ -19,7 +19,7 @@ public class PushToSpeechFake implements PushToSpeech {
 		this.text = new HashMap<String, List<String>>();
 	}
 
-	public boolean speak(String deviceid, String text) {
+	public PushToSpeechResult speak(String deviceid, String text) {
 		synchronized (this) {
 			List<String> history = this.text.get(deviceid);
 			if (history == null) {
@@ -28,7 +28,7 @@ public class PushToSpeechFake implements PushToSpeech {
 			}
 
 			history.add(text);
-			return true;
+			return new PushToSpeechResult(true, text, text);
 		}
 	}
 

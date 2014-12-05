@@ -15,7 +15,7 @@ public interface PushToSpeech {
 	 *            the device id
 	 * @param text
 	 *            the text
-	 * @return true if successful; otherwise false
+	 * @return the result
 	 */
-	public boolean speak(String deviceid, String text);
+	public PushToSpeechResult speak(String deviceid, String text);
 }

@@ -18,4 +18,16 @@ public interface PushToSpeechDAO {
 	 * @return the device ids.
 	 */
 	List<String> getPushDeviceIds(int home);
+
+	/**
+	 * Insert an action into the push to speech history.
+	 * 
+	 * @param deviceId
+	 *            the device id
+	 * @param event
+	 *            the event
+	 * @param text
+	 *            the text
+	 */
+	void insertHistory(String deviceId, String event, String text);
 }

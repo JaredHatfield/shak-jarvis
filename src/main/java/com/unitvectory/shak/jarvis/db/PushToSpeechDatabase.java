@@ -62,4 +62,25 @@ public class PushToSpeechDatabase extends AbstractDatabase implements
 			this.closeEverything(con, stmt, rs);
 		}
 	}
+
+	private static final String InsertHistoryQuery = "INSERT INTO home_pushtospeech_history "
+			+ "(pushtospeech, time, event, text) "
+			+ "VALUES ((SELECT id FROM home_pushtospeech WHERE deviceid = ?), NOW(), ?, ?) ";
+
+	public void insertHistory(String deviceId, String event, String text) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = this.getConnection();
+			stmt = con.prepareStatement(InsertHistoryQuery);
+			stmt.setString(1, deviceId);
+			stmt.setString(2, event);
+			stmt.setString(3, text);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			log.error("Unable to insert into home_pushtospeech_history", e);
+		} finally {
+			this.closeEverything(con, stmt, null);
+		}
+	}
 }

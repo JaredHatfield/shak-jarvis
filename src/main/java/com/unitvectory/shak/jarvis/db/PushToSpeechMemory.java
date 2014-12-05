@@ -45,4 +45,7 @@ public class PushToSpeechMemory implements PushToSpeechDAO {
 		}
 	}
 
+	public void insertHistory(String deviceId, String event, String text) {
+		// Not used by the in memory implementation
+	}
 }

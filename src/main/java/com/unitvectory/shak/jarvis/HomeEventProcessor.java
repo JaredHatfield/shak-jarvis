@@ -22,6 +22,7 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
 import com.unitvectory.shak.jarvis.pushover.PushOver;
 import com.unitvectory.shak.jarvis.pushover.PushOverPriority;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeech;
+import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechResult;
 
 /**
  * The home event processor
@@ -142,8 +143,14 @@ public class HomeEventProcessor {
 				}
 
 				for (String deviceid : deviceIds) {
-					this.pushToSpeech.speak(deviceid,
-							notification.getNotification());
+					PushToSpeechResult result = this.pushToSpeech.speak(
+							deviceid, notification.getNotification());
+					if (result.isResult()) {
+						String event = notification.getEvent();
+						String text = result.getOutputText();
+						this.database.pts()
+								.insertHistory(deviceid, event, text);
+					}
 				}
 			}
 		}
