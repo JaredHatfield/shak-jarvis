@@ -246,7 +246,7 @@ public abstract class SmartEvent {
 	 *            the timestamp
 	 * @return the standard date string
 	 */
-	protected String formatDate(java.sql.Timestamp timestamp) {
+	protected String formatDate(Timestamp timestamp) {
 		SimpleDateFormat df = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		// df.setTimeZone(TimeZone.getTimeZone("UTC"));
