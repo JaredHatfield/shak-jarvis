@@ -47,7 +47,7 @@ public class PersonLocationRecent {
 		this.token = token;
 		this.location = location;
 		this.status = status;
-		this.occurred = occurred;
+		this.occurred = new Date(occurred.getTime());
 	}
 
 	/**
@@ -75,6 +75,6 @@ public class PersonLocationRecent {
 	 * @return the occurred
 	 */
 	public Date getOccurred() {
-		return occurred;
+		return new Date(occurred.getTime());
 	}
 }

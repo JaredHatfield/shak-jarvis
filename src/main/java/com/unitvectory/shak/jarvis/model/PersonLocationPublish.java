@@ -103,7 +103,7 @@ public class PersonLocationPublish {
 	 * @return the date
 	 */
 	public Date getDate() {
-		return date;
+		return new Date(date.getTime());
 	}
 
 	/**
