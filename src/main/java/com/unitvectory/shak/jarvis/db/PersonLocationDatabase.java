@@ -56,7 +56,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt = con.prepareStatement(RecentLocationQuery);
 			stmt.setString(1, token);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				String location = rs.getString("location");
 				char status = rs.getString("status").charAt(0);
 				Date occurred = rs.getTimestamp("occurred");
@@ -123,7 +123,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt = con.prepareStatement(PersonNameQuery);
 			stmt.setString(1, token);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				String firstName = rs.getString("firstName");
 				String lastName = rs.getString("lastName");
 				int home = rs.getInt("home");
@@ -271,7 +271,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt = con.prepareStatement(PersonIdQuery);
 			stmt.setString(1, token);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				return rs.getInt("id");
 			}
 
@@ -305,7 +305,7 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			stmt = con.prepareStatement(PersonPlaceIdQuery);
 			stmt.setString(1, name);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				return rs.getInt("id");
 			}
 
