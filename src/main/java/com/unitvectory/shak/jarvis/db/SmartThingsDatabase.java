@@ -61,7 +61,7 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 			stmt.setString(2, event.getLocationId());
 			stmt.setString(3, event.getHubId());
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				SmartThingsDeviceDetails details = new SmartThingsDeviceDetails();
 				details.setHome(rs.getInt("home"));
 				details.setName(rs.getString("name"));
@@ -196,7 +196,7 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 			stmt.setString(2, locationId);
 			stmt.setString(3, deviceId);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				int pid = rs.getInt("pid");
 				return pid;
 			}
@@ -240,7 +240,7 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 			stmt.setString(3, deviceId);
 			stmt.execute();
 			rs = stmt.getGeneratedKeys();
-			while (rs.next()) {
+			if (rs.next()) {
 				int pid = rs.getInt(1);
 				return pid;
 			}
@@ -265,7 +265,7 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 			stmt.setString(2, event.getLocationId());
 			stmt.setString(3, event.getDeviceId());
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				return event.getPreviousObject(rs);
 			}
 
