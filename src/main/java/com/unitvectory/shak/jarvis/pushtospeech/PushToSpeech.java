@@ -17,5 +17,5 @@ public interface PushToSpeech {
 	 *            the text
 	 * @return the result
 	 */
-	public PushToSpeechResult speak(String deviceid, String text);
+	PushToSpeechResult speak(String deviceid, String text);
 }
