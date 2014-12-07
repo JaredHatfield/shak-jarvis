@@ -22,7 +22,7 @@ public class PushToSpeechMemory implements PushToSpeechDAO {
 
 	public List<String> getPushDeviceIds(int home) {
 		synchronized (this) {
-			List<String> list = this.devices.get(new Integer(home));
+			List<String> list = this.devices.get(Integer.valueOf(home));
 			if (list == null) {
 				list = new ArrayList<String>();
 			}
@@ -33,10 +33,10 @@ public class PushToSpeechMemory implements PushToSpeechDAO {
 
 	public void insert(int home, String device) {
 		synchronized (this) {
-			List<String> list = this.devices.get(new Integer(home));
+			List<String> list = this.devices.get(Integer.valueOf(home));
 			if (list == null) {
 				list = new ArrayList<String>();
-				this.devices.put(new Integer(home), list);
+				this.devices.put(Integer.valueOf(home), list);
 			}
 
 			if (!list.contains(device)) {

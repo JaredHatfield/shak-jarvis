@@ -132,7 +132,7 @@ public class DatabaseEventCache {
 	}
 
 	public List<PersonLocationDetails> getPeople(int home) {
-		Integer key = new Integer(home);
+		Integer key = Integer.valueOf(home);
 		if (this.homePeople.containsKey(key)) {
 			return this.homePeople.get(key);
 		}
