@@ -74,7 +74,7 @@ public class App implements Daemon {
 
 			// Wait for input to exit
 			@SuppressWarnings("resource")
-			Scanner sc = new Scanner(System.in);
+			Scanner sc = new Scanner(System.in, "UTF-8");
 			while (!sc.nextLine().equals("")) {
 			}
 
