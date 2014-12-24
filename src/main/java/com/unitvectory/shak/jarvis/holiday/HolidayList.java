@@ -41,6 +41,20 @@ public class HolidayList {
 	}
 
 	/**
+	 * Gets the list of holidays for a specified day.
+	 * 
+	 * @param calendar
+	 *            the calendar
+	 * @return the list of holidays
+	 */
+	public synchronized List<String> getHolidays(Calendar calendar) {
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		return this.getHolidays(year, month, day);
+	}
+
+	/**
 	 * Gets the list of holidays for a specific day.
 	 * 
 	 * @param year

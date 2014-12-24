@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
@@ -313,6 +314,32 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 		} catch (SQLException e) {
 			log.error("Unable to get person id", e);
 			return -1;
+		} finally {
+			this.closeEverything(con, stmt, rs);
+		}
+	}
+
+	private static final String HomeTimezoneQuery = "SELECT l.timezone "
+			+ "FROM home h " + "JOIN home_location l ON h.location = l.id "
+			+ "WHERE h.id = ? " + "LIMIT 1 ";
+
+	public TimeZone getTimezone(int home) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = this.getConnection();
+			stmt = con.prepareStatement(HomeTimezoneQuery);
+			stmt.setInt(1, home);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return TimeZone.getTimeZone(rs.getString("timezone"));
+			}
+
+			return TimeZone.getDefault();
+		} catch (SQLException e) {
+			log.error("Unable to get timezone", e);
+			return null;
 		} finally {
 			this.closeEverything(con, stmt, rs);
 		}

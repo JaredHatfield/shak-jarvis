@@ -76,6 +76,55 @@ public class HomeEventProcessorTest {
 	}
 
 	@Test
+	public void goodMorningTest() {
+		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
+
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 01:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("{VAILED_THREAT}");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+
+		// John At home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-10-31 01:01:00"), this.johnToken, "home", 'P'));
+		speechList.add("John is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John is arriving home... ", PushOverPriority.QUIET));
+
+		// Jane At home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-10-31 01:02:00"), this.janeToken, "home", 'P'));
+		speechList.add("Jane is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane is arriving home... ", PushOverPriority.QUIET));
+
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 01:02:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Welcome home Jane... Welcome home John... ");
+
+		// Good morning motion
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 11:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Good morning Today is Halloween...");
+
+		// Verify the output
+		String[] speech = speechList.toArray(new String[speechList.size()]);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
+	}
+
+	@Test
 	public void locationTest() {
 		HomeEventProcessor processor = this.getProcessor();
 		List<String> speechList = new ArrayList<String>();

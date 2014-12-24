@@ -53,6 +53,11 @@ public class DatabaseEventCache {
 	private Map<String, SmartEvent> previousEvent;
 
 	/**
+	 * the home timezones
+	 */
+	private Map<Integer, TimeZone> homeTimezones;
+
+	/**
 	 * Creates a new instance of the DatabaseEventCache class.
 	 * 
 	 * @param database
@@ -65,6 +70,7 @@ public class DatabaseEventCache {
 		this.homePeople = new HashMap<Integer, List<PersonLocationDetails>>();
 		this.recentLocation = new HashMap<String, PersonLocationRecent>();
 		this.previousEvent = new HashMap<String, SmartEvent>();
+		this.homeTimezones = new HashMap<Integer, TimeZone>();
 	}
 
 	/**
@@ -240,6 +246,17 @@ public class DatabaseEventCache {
 		return atWork;
 	}
 
+	public TimeZone getHomeTimeZone(int home) {
+		Integer key = Integer.valueOf(home);
+		if (this.homeTimezones.containsKey(key)) {
+			return this.homeTimezones.get(key);
+		}
+
+		TimeZone timezone = this.database.pl().getTimezone(home);
+		this.homeTimezones.put(key, timezone);
+		return timezone;
+	}
+
 	/**
 	 * Clears the cache
 	 */
@@ -249,5 +266,6 @@ public class DatabaseEventCache {
 		this.homePeople.clear();
 		this.recentLocation.clear();
 		this.previousEvent.clear();
+		this.homeTimezones.clear();
 	}
 }

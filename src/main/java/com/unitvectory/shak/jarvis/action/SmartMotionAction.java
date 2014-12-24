@@ -2,6 +2,7 @@ package com.unitvectory.shak.jarvis.action;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -9,6 +10,7 @@ import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
+import com.unitvectory.shak.jarvis.holiday.HolidayList;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
 
@@ -20,11 +22,14 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
  */
 public class SmartMotionAction extends SmartAction {
 
+	private HolidayList holiday;
+
 	/**
 	 * Creates a new instance of the SmartMotionAction class.
 	 * 
 	 */
 	public SmartMotionAction() {
+		this.holiday = new HolidayList();
 	}
 
 	@Override
@@ -77,11 +82,40 @@ public class SmartMotionAction extends SmartAction {
 		Calendar currentCalendar = motion.getCalendar();
 		Calendar previousCalendar = previousMotion.getCalendar();
 
+		// Set the dates to the users time zone
+		TimeZone homeTimeZone = cache.getHomeTimeZone(details.getHome());
+		currentCalendar.setTimeZone(homeTimeZone);
+		previousCalendar.setTimeZone(homeTimeZone);
+
 		// Motion inside in the target area
 		if (motion.getStatus() == 'A' && details.isTarget()
 				&& cache.isSomeoneHome(details.getHome())) {
 
-			// TODO: Good morning message
+			// Good morning message
+			if (TimeHelper.isMorning(currentCalendar)
+					&& TimeHelper.isFirstMorning(currentCalendar,
+							previousCalendar)) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Good morning ");
+
+				// Look up the list of holidays
+				List<String> holidayNames = this.holiday
+						.getHolidays(currentCalendar);
+				for (int i = 0; i < holidayNames.size(); i++) {
+					sb.append("Today is ");
+					if (i > 0) {
+						sb.append("also ");
+					}
+
+					sb.append(holidayNames.get(i));
+					sb.append("...");
+				}
+
+				notifications.speak(details.getHome(), sb.toString());
+			}
+			// Calendar morningTime = (Calendar) currentCalendar.clone();
+			// morningTime.setTimeZone(homeTimeZone);
+			// morningTime.get
 
 			// Welcome home message
 			StringBuilder sb = new StringBuilder();

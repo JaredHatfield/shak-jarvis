@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.db;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
@@ -49,4 +50,13 @@ public interface PersonLocationDAO {
 	 * @return the insert result
 	 */
 	InsertResult insertLocation(PersonLocationPublish publish);
+
+	/**
+	 * Gets the timezone for a home.
+	 * 
+	 * @param home
+	 *            the home
+	 * @return the timezone
+	 */
+	TimeZone getTimezone(int home);
 }
