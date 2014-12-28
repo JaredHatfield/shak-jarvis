@@ -12,6 +12,7 @@ import java.util.TimeZone;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 
 /**
@@ -255,6 +256,11 @@ public class DatabaseEventCache {
 		TimeZone timezone = this.database.pl().getTimezone(home);
 		this.homeTimezones.put(key, timezone);
 		return timezone;
+	}
+
+	public WeatherDetails getWeather(int home, Date time) {
+		// No caching required for infrequent request type
+		return this.database.pl().getWeather(home, time);
 	}
 
 	/**

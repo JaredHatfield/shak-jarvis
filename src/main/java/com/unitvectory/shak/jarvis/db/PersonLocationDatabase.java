@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -339,6 +341,42 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 			return TimeZone.getDefault();
 		} catch (SQLException e) {
 			log.error("Unable to get timezone", e);
+			return null;
+		} finally {
+			this.closeEverything(con, stmt, rs);
+		}
+	}
+
+	private static final String WeatherQuery = "SELECT w.summary, "
+			+ "ROUND(w.temperatureMin) temperatureMin, ROUND(w.temperatureMax) temperatureMax "
+			+ "FROM home_weather w "
+			+ "JOIN home_location l ON w.location = l.id "
+			+ "JOIN home h on l.id = h.location " + "WHERE h.id = ? "
+			+ "AND DATE(CONVERT_TZ(w.time, 'UTC', l.timezone)) = ? "
+			+ "LIMIT 1 ";
+
+	public WeatherDetails getWeather(int home, Date time) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = this.getConnection();
+			stmt = con.prepareStatement(WeatherQuery);
+			stmt.setInt(1, home);
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			stmt.setString(2, df.format(time));
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				String summary = rs.getString("summary");
+				int temperatureMin = rs.getInt("temperatureMin");
+				int temperatureMax = rs.getInt("temperatureMax");
+				return new WeatherDetails(summary, temperatureMin,
+						temperatureMax);
+			}
+
+			return null;
+		} catch (SQLException e) {
+			log.error("Unable to get weather", e);
 			return null;
 		} finally {
 			this.closeEverything(con, stmt, rs);

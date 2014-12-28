@@ -1,10 +1,12 @@
 package com.unitvectory.shak.jarvis.db;
 
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -59,4 +61,15 @@ public interface PersonLocationDAO {
 	 * @return the timezone
 	 */
 	TimeZone getTimezone(int home);
+
+	/**
+	 * Gets the weather for the specified time.
+	 * 
+	 * @param home
+	 *            the home
+	 * @param time
+	 *            the time
+	 * @return the weather details
+	 */
+	WeatherDetails getWeather(int home, Date time);
 }

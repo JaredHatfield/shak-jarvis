@@ -10,6 +10,7 @@ import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.holiday.HolidayList;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
@@ -96,7 +97,7 @@ public class SmartMotionAction extends SmartAction {
 					&& TimeHelper.isFirstMorning(currentCalendar,
 							previousCalendar)) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("Good morning ");
+				sb.append("Good morning... ");
 
 				// Look up the list of holidays
 				List<String> holidayNames = this.holiday
@@ -108,7 +109,28 @@ public class SmartMotionAction extends SmartAction {
 					}
 
 					sb.append(holidayNames.get(i));
-					sb.append("...");
+					sb.append("... ");
+				}
+
+				// Get the midnight time for the request
+				Calendar midnight = (Calendar) currentCalendar.clone();
+				midnight.set(Calendar.HOUR_OF_DAY, 0);
+				midnight.set(Calendar.MINUTE, 0);
+				midnight.set(Calendar.SECOND, 0);
+				midnight.set(Calendar.MILLISECOND, 0);
+
+				// Look up the weather
+				WeatherDetails weather = cache.getWeather(details.getHome(),
+						midnight.getTime());
+				if (weather != null) {
+					sb.append("The weather today is... ");
+					sb.append(weather.getSummary());
+					sb.append(".. ");
+					sb.append("With a low of ");
+					sb.append(weather.getTemperatureMin());
+					sb.append(" and a high of ");
+					sb.append(weather.getTemperatureMax());
+					sb.append("... ");
 				}
 
 				notifications.speak(details.getHome(), sb.toString());
