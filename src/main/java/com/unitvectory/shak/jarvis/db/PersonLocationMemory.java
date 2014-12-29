@@ -1,13 +1,17 @@
 package com.unitvectory.shak.jarvis.db;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
 /**
@@ -24,10 +28,13 @@ public class PersonLocationMemory implements PersonLocationDAO {
 
 	private Map<String, PersonLocationRecent> recent;
 
+	private Map<String, WeatherDetails> weather;
+
 	public PersonLocationMemory() {
 		this.people = new TreeMap<String, PersonLocationDetails>();
 		this.locations = new ArrayList<PersonLocationPublish>();
 		this.recent = new HashMap<String, PersonLocationRecent>();
+		this.weather = new HashMap<String, WeatherDetails>();
 	}
 
 	public PersonLocationRecent getRecentLocation(String token) {
@@ -67,5 +74,20 @@ public class PersonLocationMemory implements PersonLocationDAO {
 		synchronized (this) {
 			this.people.put(details.getToken(), details);
 		}
+	}
+
+	public TimeZone getTimezone(int home) {
+		// Assuming everything is New York for testing purposes
+		return TimeZone.getTimeZone("America/New_York");
+	}
+
+	public WeatherDetails getWeather(int home, Date time) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String key = df.format(time);
+		return this.weather.get(key);
+	}
+
+	public void addWeather(String time, WeatherDetails details) {
+		this.weather.put(time, details);
 	}
 }

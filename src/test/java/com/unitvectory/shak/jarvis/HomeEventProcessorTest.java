@@ -19,6 +19,7 @@ import com.unitvectory.shak.jarvis.db.PushToSpeechMemory;
 import com.unitvectory.shak.jarvis.db.ShakDatabase;
 import com.unitvectory.shak.jarvis.db.SmartThingsMemory;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
+import com.unitvectory.shak.jarvis.db.model.WeatherDetails;
 import com.unitvectory.shak.jarvis.model.RequestGenerator;
 import com.unitvectory.shak.jarvis.pushover.PushOverFake;
 import com.unitvectory.shak.jarvis.pushover.PushOverFakeMessage;
@@ -73,6 +74,68 @@ public class HomeEventProcessorTest {
 		this.janePushOver = this.getUUID();
 		this.johnToken = "B-" + this.getUUID();
 		this.johnPushOver = this.getUUID();
+	}
+
+	@Test
+	public void goodMorningTest() {
+		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
+		PersonLocationMemory pl = (PersonLocationMemory) processor
+				.getDatabase().pl();
+
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 01:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("{VAILED_THREAT}");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Unexpected motion in the Kitchen... ", PushOverPriority.QUIET));
+
+		// John At home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-10-31 01:01:00"), this.johnToken, "home", 'P'));
+		speechList.add("John is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John is arriving home... ", PushOverPriority.QUIET));
+
+		// Jane At home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-10-31 01:02:00"), this.janeToken, "home", 'P'));
+		speechList.add("Jane is arriving home... ");
+		pushList.add(new PushOverFakeMessage(this.johnPushOver,
+				"Jane is arriving home... ", PushOverPriority.QUIET));
+
+		// Kitchen motion (John arrived home; Jane left work)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 01:02:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Welcome home Jane... Welcome home John... ");
+
+		// Good morning motion
+		pl.addWeather("2014-10-31", new WeatherDetails("Sunny.", 70, 80));
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-10-31 11:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Good morning... " + "Today is Halloween... "
+				+ "The weather today is... " + "Sunny... "
+				+ "With a low of 70 and a high of 80... ");
+
+		// Good morning motion
+		pl.addWeather("2014-11-01", new WeatherDetails("Cloudy.", 71, 81));
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-11-01 11:00:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
+		speechList.add("Good morning... " + "The weather today is... "
+				+ "Cloudy... " + "With a low of 71 and a high of 81... ");
+
+		// Verify the output
+		String[] speech = speechList.toArray(new String[speechList.size()]);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
 	}
 
 	@Test

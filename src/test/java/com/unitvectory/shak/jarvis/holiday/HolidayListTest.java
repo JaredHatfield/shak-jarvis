@@ -59,6 +59,13 @@ public class HolidayListTest {
 		this.isHoliday(2015, 1, 19, "MLK_DAY");
 	}
 
+	@Test
+	public void halloweenTest() {
+		this.isHoliday(2013, 10, 31, "HALLOWEEN");
+		this.isHoliday(2014, 10, 31, "HALLOWEEN");
+		this.isHoliday(2015, 10, 31, "HALLOWEEN");
+	}
+
 	private void isHoliday(int year, int month, int day, String name) {
 		List<String> list = holiday.getEvents(year, month, day);
 		assertNotNull(list);
