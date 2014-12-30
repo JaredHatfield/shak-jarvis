@@ -22,7 +22,7 @@ public class TimeHelper {
 			return false;
 		}
 
-		int hour = time.get(Calendar.HOUR);
+		int hour = time.get(Calendar.HOUR_OF_DAY);
 		return hour >= 6 && hour <= 10;
 	}
 
@@ -43,7 +43,7 @@ public class TimeHelper {
 		if (time.get(Calendar.YEAR) == previous.get(Calendar.YEAR)
 				&& time.get(Calendar.DAY_OF_YEAR) == previous
 						.get(Calendar.DAY_OF_YEAR)
-				&& previous.get(Calendar.HOUR) >= 6) {
+				&& previous.get(Calendar.HOUR_OF_DAY) >= 6) {
 			return false;
 		}
 

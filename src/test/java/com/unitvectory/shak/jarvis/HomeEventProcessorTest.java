@@ -123,6 +123,13 @@ public class HomeEventProcessorTest {
 				+ "The weather today is... " + "Sunny... "
 				+ "With a low of 70 and a high of 80... ");
 
+		// More motion during the day
+		for (int i = 12; i < 24; i++) {
+			processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+					date("2014-10-31 " + i + ":00:00"), this.kitchenId,
+					this.hubId, this.locationId, true));
+		}
+
 		// Good morning motion
 		pl.addWeather("2014-11-01", new WeatherDetails("Cloudy.", 71, 81));
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
