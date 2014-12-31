@@ -28,7 +28,6 @@ class VariableHolidays {
 		nth(list, 3, Calendar.SUNDAY, Calendar.JUNE, year, "FATHERS_DAY");
 		nth(list, 1, Calendar.MONDAY, Calendar.SEPTEMBER, year, "LABOR_DAY");
 		nthDayOfYear(list, year, 256, "PROGRAMERS_DAY");
-		// $this->variable[9][""] = "January 1 YEAR + 255 days";
 		nth(list, 2, Calendar.MONDAY, Calendar.OCTOBER, year, "COLUMBUS_DAY");
 		list.add(year, Calendar.NOVEMBER,
 				getNthOfMonth(1, Calendar.MONDAY, Calendar.NOVEMBER, year) + 1,
