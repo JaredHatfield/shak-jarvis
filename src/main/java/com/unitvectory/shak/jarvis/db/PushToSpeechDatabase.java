@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -28,9 +29,9 @@ public class PushToSpeechDatabase extends AbstractDatabase implements
 	 * Creates a new instance of the PushToSpeechDatabase class.
 	 * 
 	 * @param ds
-	 *            the basic data source
+	 *            the data source
 	 */
-	public PushToSpeechDatabase(BasicDataSource ds) {
+	public PushToSpeechDatabase(DataSource ds) {
 		super(ds);
 	}
 

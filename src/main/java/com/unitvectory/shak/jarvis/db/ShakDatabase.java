@@ -1,10 +1,12 @@
 package com.unitvectory.shak.jarvis.db;
 
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.log4j.Logger;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.unitvectory.shak.jarvis.AppConfig;
 
 /**
@@ -16,9 +18,14 @@ import com.unitvectory.shak.jarvis.AppConfig;
 public class ShakDatabase {
 
 	/**
+	 * the log
+	 */
+	private static Logger log = Logger.getLogger(ShakDatabase.class);
+
+	/**
 	 * the data source
 	 */
-	private BasicDataSource dataSource;
+	private ComboPooledDataSource dataSource;
 
 	/**
 	 * the smart things DAO
@@ -43,13 +50,21 @@ public class ShakDatabase {
 	 */
 	public ShakDatabase(AppConfig config) {
 		// Connect to the database
-		this.dataSource = new BasicDataSource();
-		this.dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		this.dataSource.setValidationQuery("SELECT 1");
-		this.dataSource.setUsername(config.getDbUser());
+		this.dataSource = new ComboPooledDataSource();
+		try {
+			this.dataSource.setDriverClass("com.mysql.jdbc.Driver");
+		} catch (PropertyVetoException e) {
+			log.error("Unable to load MySQL database driver.", e);
+		}
+
+		this.dataSource.setPreferredTestQuery("SELECT 1");
+		this.dataSource.setUser(config.getDbUser());
 		this.dataSource.setPassword(config.getDbPassword());
-		this.dataSource.setUrl(config.getDbUrl());
-		this.dataSource.setInitialSize(1);
+		this.dataSource.setJdbcUrl(config.getDbUrl());
+		this.dataSource.setInitialPoolSize(1);
+		this.dataSource.setMinPoolSize(1);
+		this.dataSource.setMaxIdleTimeExcessConnections(120);
+		this.dataSource.setIdleConnectionTestPeriod(30);
 
 		// Create the DAO objects
 		this.st = new SmartThingsDatabase(this.dataSource);
@@ -88,6 +103,13 @@ public class ShakDatabase {
 	 */
 	public PushToSpeechDAO pts() {
 		return pts;
+	}
+
+	/**
+	 * Close the connection
+	 */
+	public void close() {
+		this.dataSource.close();
 	}
 
 	/**

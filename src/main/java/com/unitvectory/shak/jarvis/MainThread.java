@@ -169,5 +169,11 @@ public class MainThread extends Thread {
 				// Safe to ignore
 			}
 		}
+
+		try {
+			this.database.close();
+		} catch (Exception e) {
+			log.error("Failed to close database connection.", e);
+		}
 	}
 }

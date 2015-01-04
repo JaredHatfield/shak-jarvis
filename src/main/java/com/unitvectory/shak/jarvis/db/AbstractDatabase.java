@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import javax.sql.DataSource;
 
 /**
  * The abstract database that provides some common functionality for a DAO.
@@ -16,17 +16,17 @@ import org.apache.commons.dbcp.BasicDataSource;
 public class AbstractDatabase {
 
 	/**
-	 * the basic data source
+	 * the data source
 	 */
-	private BasicDataSource ds;
+	private DataSource ds;
 
 	/**
 	 * Creates a new instance of the AbstractDatabase class.
 	 * 
 	 * @param ds
-	 *            the basic data source
+	 *            the data source
 	 */
-	public AbstractDatabase(BasicDataSource ds) {
+	public AbstractDatabase(DataSource ds) {
 		this.ds = ds;
 	}
 

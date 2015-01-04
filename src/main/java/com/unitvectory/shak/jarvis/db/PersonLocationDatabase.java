@@ -11,7 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
@@ -37,9 +38,9 @@ public class PersonLocationDatabase extends AbstractDatabase implements
 	 * Creates a new instance of the PersonLocationDatabase class.
 	 * 
 	 * @param ds
-	 *            the basic data source
+	 *            the data source
 	 */
-	public PersonLocationDatabase(BasicDataSource ds) {
+	public PersonLocationDatabase(DataSource ds) {
 		super(ds);
 	}
 

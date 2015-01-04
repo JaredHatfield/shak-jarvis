@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -32,9 +33,9 @@ public class SmartThingsDatabase extends AbstractDatabase implements
 	 * Creates a new instance of the SmartThingsDatabase
 	 * 
 	 * @param ds
-	 *            the basic data source
+	 *            the data source
 	 */
-	public SmartThingsDatabase(BasicDataSource ds) {
+	public SmartThingsDatabase(DataSource ds) {
 		super(ds);
 	}
 
