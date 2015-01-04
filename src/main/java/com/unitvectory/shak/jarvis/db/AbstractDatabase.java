@@ -7,6 +7,8 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
+
 /**
  * The abstract database that provides some common functionality for a DAO.
  * 
@@ -14,6 +16,11 @@ import javax.sql.DataSource;
  * 
  */
 public class AbstractDatabase {
+
+	/**
+	 * the log
+	 */
+	private static Logger log = Logger.getLogger(AbstractDatabase.class);
 
 	/**
 	 * the data source
@@ -55,6 +62,7 @@ public class AbstractDatabase {
 			try {
 				rs.close();
 			} catch (SQLException e) {
+				log.warn("error closing result set.", e);
 			}
 		}
 
@@ -62,6 +70,7 @@ public class AbstractDatabase {
 			try {
 				stmt.close();
 			} catch (SQLException e) {
+				log.warn("error closing statement.", e);
 			}
 		}
 
@@ -69,6 +78,7 @@ public class AbstractDatabase {
 			try {
 				con.close();
 			} catch (SQLException e) {
+				log.warn("error closing connection.", e);
 			}
 		}
 	}
