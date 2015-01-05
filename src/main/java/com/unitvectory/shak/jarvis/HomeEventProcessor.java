@@ -215,8 +215,6 @@ public class HomeEventProcessor {
 		List<ActionNotification> notifications = new ArrayList<ActionNotification>();
 		this.append(notifications,
 				this.locationAction.getActions(cache, location));
-
-		// TODO: Process the location
 		return notifications;
 	}
 
