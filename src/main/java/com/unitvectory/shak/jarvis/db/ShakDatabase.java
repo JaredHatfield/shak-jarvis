@@ -138,6 +138,7 @@ public class ShakDatabase {
 					connection.close();
 				} catch (SQLException e) {
 					// Safe to ignore
+					log.warn("failed to close connection", e);
 				}
 			}
 		}

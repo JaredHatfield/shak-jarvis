@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.log4j.Logger;
+
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
@@ -22,6 +24,11 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
  * 
  */
 public class DatabaseEventCache {
+
+	/**
+	 * the log
+	 */
+	private static Logger log = Logger.getLogger(DatabaseEventCache.class);
 
 	/**
 	 * the database
@@ -110,6 +117,7 @@ public class DatabaseEventCache {
 		try {
 			details = this.database.st().getDeviceDetails(event);
 		} catch (SQLException e) {
+			log.warn("sql failed to get device details", e);
 		}
 
 		this.deviceDetails.put(key, details);
@@ -181,6 +189,7 @@ public class DatabaseEventCache {
 		try {
 			previous = this.database.st().getPreviousEvent(event);
 		} catch (SQLException e) {
+			log.warn("sql failed to get previous event", e);
 		}
 
 		if (previous != null) {
