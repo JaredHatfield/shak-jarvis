@@ -76,6 +76,7 @@ public class App implements Daemon {
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(System.in, "UTF-8");
 			while (!sc.nextLine().equals("")) {
+				System.out.println("Press ENTER to exit...");
 			}
 
 			// Exit the app
