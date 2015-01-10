@@ -146,6 +146,46 @@ public class HomeEventProcessorTest {
 	}
 
 	@Test
+	public void invalidLocationTest() {
+		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:00:00"), this.johnToken, "home", 'Q'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:01:00"), this.johnToken, "foo", 'N'));
+
+		// John Left home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:02:00"), this.johnToken, "home", 'N'));
+		speechList.add("John has left home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John has left home... ", PushOverPriority.QUIET));
+
+		// John Left home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:03:00"), this.johnToken, "home", 'N'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:00"), this.johnToken, "home", 'Q'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:05:00"), this.johnToken, "foo", 'N'));
+
+		// Verify the output
+		String[] speech = speechList.toArray(new String[speechList.size()]);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
+	}
+
+	@Test
 	public void locationTest() {
 		HomeEventProcessor processor = this.getProcessor();
 		List<String> speechList = new ArrayList<String>();
@@ -175,12 +215,20 @@ public class HomeEventProcessorTest {
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane has left home... ", PushOverPriority.QUIET));
 
+		// Jane left home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:01:00"), this.janeToken, "home", 'N'));
+
 		// Jane At work
 		processor.processEvent(RequestGenerator.buildLocation(
 				date("2014-08-28 20:02:00"), this.janeToken, "work", 'P'));
 		speechList.add("Jane is arriving at work... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane is arriving at work... ", PushOverPriority.QUIET));
+
+		// Jane At work (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:02:30"), this.janeToken, "work", 'P'));
 
 		// John At work
 		processor.processEvent(RequestGenerator.buildLocation(
@@ -196,6 +244,10 @@ public class HomeEventProcessorTest {
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John has left work... ", PushOverPriority.QUIET));
 
+		// John Left work (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:30"), this.johnToken, "work", 'N'));
+
 		// Jane Left work
 		processor.processEvent(RequestGenerator.buildLocation(
 				date("2014-08-28 20:05:00"), this.janeToken, "work", 'N'));
@@ -209,6 +261,10 @@ public class HomeEventProcessorTest {
 		speechList.add("John is arriving home... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John is arriving home... ", PushOverPriority.QUIET));
+
+		// John At home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:06:30"), this.johnToken, "home", 'P'));
 
 		// Kitchen motion (John arrived home; Jane left work)
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
@@ -228,6 +284,15 @@ public class HomeEventProcessorTest {
 				date("2014-08-28 20:20:00"), this.kitchenId, this.hubId,
 				this.locationId, true));
 		speechList.add("Welcome home Jane... ");
+
+		// Jane At home (again)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:21:00"), this.janeToken, "home", 'P'));
+
+		// Kitchen motion (Jane still at home)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:22:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
 
 		// More motion
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
