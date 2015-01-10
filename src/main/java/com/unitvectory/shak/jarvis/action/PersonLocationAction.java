@@ -3,6 +3,8 @@ package com.unitvectory.shak.jarvis.action;
 import java.util.List;
 
 import com.unitvectory.shak.jarvis.db.DatabaseEventCache;
+import com.unitvectory.shak.jarvis.db.LatchDAO;
+import com.unitvectory.shak.jarvis.db.model.LatchValue;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.model.PersonLocationPublish;
 
@@ -33,12 +35,25 @@ public class PersonLocationAction {
 			PersonLocationPublish event) {
 		NotificationBuilder notifications = new NotificationBuilder(cache,
 				"LOCATION");
+		LatchDAO latch = cache.getLatchDatabase();
 
 		PersonLocationDetails person = cache.getPerson(event.getToken());
 		if (person == null) {
 			return notifications.getList();
 		}
 
+		// The previous value of the latch
+		LatchValue latchValue = latch.getLatch(
+				person.getHome(),
+				this.getLatchName(person.getToken(), event.getLocation(),
+						event.getStatus()));
+
+		// Latch is true so no notification needed
+		if (LatchValue.TRUE.equals(latchValue)) {
+			return notifications.getList();
+		}
+
+		// Notify of the location change
 		StringBuilder sb = new StringBuilder();
 		sb.append(person.getFirstName());
 		if (event.getStatus() == 'P') {
@@ -56,6 +71,24 @@ public class PersonLocationAction {
 		sb.append("... ");
 		String message = sb.toString();
 
+		// Update all of the location latches
+		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
+				"home", 'P'),
+				event.getLocation().equals("home") && event.getStatus() == 'P');
+		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
+				"home", 'N'),
+				event.getLocation().equals("home") && event.getStatus() == 'N');
+		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
+				"work", 'P'),
+				event.getLocation().equals("work") && event.getStatus() == 'P');
+		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
+				"work", 'N'),
+				event.getLocation().equals("work") && event.getStatus() == 'N');
+
+		// Update the welcome home latch
+		latch.setLatch(person.getHome(), ":t:" + person.getToken()
+				+ ":welcomehome:", false);
+
 		// PushToSpeech Notification
 		notifications.speak(person.getHome(), message);
 
@@ -63,5 +96,17 @@ public class PersonLocationAction {
 		notifications.notifyHome(person.getHome(), message, person.getToken());
 
 		return notifications.getList();
+	}
+
+	private String getLatchName(String token, String location, char state) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(":t:");
+		sb.append(token);
+		sb.append(":l:");
+		sb.append(location);
+		sb.append(":s:");
+		sb.append(state);
+		sb.append(":");
+		return sb.toString();
 	}
 }

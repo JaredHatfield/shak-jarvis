@@ -28,6 +28,11 @@ public class ShakDatabase {
 	private ComboPooledDataSource dataSource;
 
 	/**
+	 * the latch DAO
+	 */
+	private LatchDAO l;
+
+	/**
 	 * the smart things DAO
 	 */
 	private SmartThingsDAO st;
@@ -67,6 +72,7 @@ public class ShakDatabase {
 		this.dataSource.setIdleConnectionTestPeriod(30);
 
 		// Create the DAO objects
+		this.l = new LatchDatabase(this.dataSource);
 		this.st = new SmartThingsDatabase(this.dataSource);
 		this.pl = new PersonLocationDatabase(this.dataSource);
 		this.pts = new PushToSpeechDatabase(this.dataSource);
@@ -79,9 +85,17 @@ public class ShakDatabase {
 	 */
 	public ShakDatabase() {
 		this.dataSource = null;
+		this.l = new LatchMemory();
 		this.st = new SmartThingsMemory();
 		this.pl = new PersonLocationMemory();
 		this.pts = new PushToSpeechMemory();
+	}
+
+	/**
+	 * @return the latch dao
+	 */
+	public LatchDAO l() {
+		return l;
 	}
 
 	/**

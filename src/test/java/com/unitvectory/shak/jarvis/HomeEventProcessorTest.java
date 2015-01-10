@@ -175,12 +175,20 @@ public class HomeEventProcessorTest {
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane has left home... ", PushOverPriority.QUIET));
 
+		// Jane left home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:01:00"), this.janeToken, "home", 'N'));
+
 		// Jane At work
 		processor.processEvent(RequestGenerator.buildLocation(
 				date("2014-08-28 20:02:00"), this.janeToken, "work", 'P'));
 		speechList.add("Jane is arriving at work... ");
 		pushList.add(new PushOverFakeMessage(this.johnPushOver,
 				"Jane is arriving at work... ", PushOverPriority.QUIET));
+
+		// Jane At work (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:02:30"), this.janeToken, "work", 'P'));
 
 		// John At work
 		processor.processEvent(RequestGenerator.buildLocation(
@@ -196,6 +204,10 @@ public class HomeEventProcessorTest {
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John has left work... ", PushOverPriority.QUIET));
 
+		// John Left work (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:30"), this.johnToken, "work", 'N'));
+
 		// Jane Left work
 		processor.processEvent(RequestGenerator.buildLocation(
 				date("2014-08-28 20:05:00"), this.janeToken, "work", 'N'));
@@ -209,6 +221,10 @@ public class HomeEventProcessorTest {
 		speechList.add("John is arriving home... ");
 		pushList.add(new PushOverFakeMessage(this.janePushOver,
 				"John is arriving home... ", PushOverPriority.QUIET));
+
+		// John At home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:06:30"), this.johnToken, "home", 'P'));
 
 		// Kitchen motion (John arrived home; Jane left work)
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
@@ -228,6 +244,15 @@ public class HomeEventProcessorTest {
 				date("2014-08-28 20:20:00"), this.kitchenId, this.hubId,
 				this.locationId, true));
 		speechList.add("Welcome home Jane... ");
+
+		// Jane At home (again)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:21:00"), this.janeToken, "home", 'P'));
+
+		// Kitchen motion (Jane still at home)
+		processor.processEvent(RequestGenerator.buildMotionSmartEvent(
+				date("2014-08-28 20:22:00"), this.kitchenId, this.hubId,
+				this.locationId, true));
 
 		// More motion
 		processor.processEvent(RequestGenerator.buildMotionSmartEvent(

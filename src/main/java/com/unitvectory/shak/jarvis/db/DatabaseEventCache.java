@@ -11,6 +11,7 @@ import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 
+import com.unitvectory.shak.jarvis.db.model.LatchValue;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationDetails;
 import com.unitvectory.shak.jarvis.db.model.PersonLocationRecent;
 import com.unitvectory.shak.jarvis.db.model.SmartThingsDeviceDetails;
@@ -214,11 +215,16 @@ public class DatabaseEventCache {
 				continue;
 			}
 
+			String welcome = ":t:" + person.getToken() + ":welcomehome:";
+			LatchValue welcomeLatch = this.database.l().getLatch(home, welcome);
+
 			Date locDate = location.getOccurred();
 			Date comDate = compare.getTime();
 			if (location.getLocation().equalsIgnoreCase("home")
-					&& location.getStatus() == 'P' && locDate.after(comDate)) {
+					&& location.getStatus() == 'P' && locDate.after(comDate)
+					&& LatchValue.FALSE.equals(welcomeLatch)) {
 				arriving.add(person);
+				this.database.l().setLatch(home, welcome, true);
 			}
 		}
 
@@ -270,6 +276,10 @@ public class DatabaseEventCache {
 	public WeatherDetails getWeather(int home, Date time) {
 		// No caching required for infrequent request type
 		return this.database.pl().getWeather(home, time);
+	}
+
+	public LatchDAO getLatchDatabase() {
+		return this.database.l();
 	}
 
 	/**
