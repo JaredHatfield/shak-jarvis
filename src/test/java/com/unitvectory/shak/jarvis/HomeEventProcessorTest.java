@@ -146,6 +146,46 @@ public class HomeEventProcessorTest {
 	}
 
 	@Test
+	public void invalidLocationTest() {
+		HomeEventProcessor processor = this.getProcessor();
+		List<String> speechList = new ArrayList<String>();
+		List<PushOverFakeMessage> pushList = new ArrayList<PushOverFakeMessage>();
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:00:00"), this.johnToken, "home", 'Q'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:01:00"), this.johnToken, "foo", 'N'));
+
+		// John Left home
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:02:00"), this.johnToken, "home", 'N'));
+		speechList.add("John has left home... ");
+		pushList.add(new PushOverFakeMessage(this.janePushOver,
+				"John has left home... ", PushOverPriority.QUIET));
+
+		// John Left home (duplicate)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:03:00"), this.johnToken, "home", 'N'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:04:00"), this.johnToken, "home", 'Q'));
+
+		// John (invalid)
+		processor.processEvent(RequestGenerator.buildLocation(
+				date("2014-08-28 20:05:00"), this.johnToken, "foo", 'N'));
+
+		// Verify the output
+		String[] speech = speechList.toArray(new String[speechList.size()]);
+		PushOverFakeMessage[] push = pushList
+				.toArray(new PushOverFakeMessage[pushList.size()]);
+		this.verify(processor, speech, push);
+	}
+
+	@Test
 	public void locationTest() {
 		HomeEventProcessor processor = this.getProcessor();
 		List<String> speechList = new ArrayList<String>();

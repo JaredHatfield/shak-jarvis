@@ -192,7 +192,20 @@ public class HomeEventProcessor {
 	 */
 	private List<ActionNotification> processLocationEvent(
 			JsonPublishRequest request) {
+		if (request == null) {
+			return null;
+		}
+
 		PersonLocationPublish location = new PersonLocationPublish(request);
+
+		if (!("home".equals(location.getLocation()) || "work".equals(location
+				.getLocation()))) {
+			return null;
+		}
+
+		if (!(location.getStatus() == 'P' || location.getStatus() == 'N')) {
+			return null;
+		}
 
 		InsertResult insertResult = this.database.pl().insertLocation(location);
 		log.info(insertResult + " - " + location);

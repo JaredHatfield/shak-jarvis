@@ -42,11 +42,14 @@ public class PersonLocationAction {
 			return notifications.getList();
 		}
 
+		int home = person.getHome();
+		String token = person.getToken();
+		String location = event.getLocation();
+		char status = event.getStatus();
+
 		// The previous value of the latch
-		LatchValue latchValue = latch.getLatch(
-				person.getHome(),
-				this.getLatchName(person.getToken(), event.getLocation(),
-						event.getStatus()));
+		LatchValue latchValue = latch.getLatch(home,
+				this.getLatchName(token, location, status));
 
 		// Latch is true so no notification needed
 		if (LatchValue.TRUE.equals(latchValue)) {
@@ -56,44 +59,39 @@ public class PersonLocationAction {
 		// Notify of the location change
 		StringBuilder sb = new StringBuilder();
 		sb.append(person.getFirstName());
-		if (event.getStatus() == 'P') {
+		if (status == 'P') {
 			sb.append(" is arriving ");
-			if (!event.getLocation().equals("home")) {
+			if (!location.equals("home")) {
 				sb.append("at ");
 			}
-		} else if (event.getStatus() == 'N') {
+		} else if (status == 'N') {
 			sb.append(" has left ");
 		} else {
 			sb.append(" has moved to ");
 		}
 
-		sb.append(event.getLocation());
+		sb.append(location);
 		sb.append("... ");
 		String message = sb.toString();
 
 		// Update all of the location latches
-		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
-				"home", 'P'),
-				event.getLocation().equals("home") && event.getStatus() == 'P');
-		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
-				"home", 'N'),
-				event.getLocation().equals("home") && event.getStatus() == 'N');
-		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
-				"work", 'P'),
-				event.getLocation().equals("work") && event.getStatus() == 'P');
-		latch.setLatch(person.getHome(), this.getLatchName(person.getToken(),
-				"work", 'N'),
-				event.getLocation().equals("work") && event.getStatus() == 'N');
+		latch.setLatch(person.getHome(), this.getLatchName(token, "home", 'P'),
+				location.equals("home") && status == 'P');
+		latch.setLatch(person.getHome(), this.getLatchName(token, "home", 'N'),
+				location.equals("home") && status == 'N');
+		latch.setLatch(person.getHome(), this.getLatchName(token, "work", 'P'),
+				location.equals("work") && status == 'P');
+		latch.setLatch(person.getHome(), this.getLatchName(token, "work", 'N'),
+				location.equals("work") && status == 'N');
 
 		// Update the welcome home latch
-		latch.setLatch(person.getHome(), ":t:" + person.getToken()
-				+ ":welcomehome:", false);
+		latch.setLatch(person.getHome(), ":t:" + token + ":welcomehome:", false);
 
 		// PushToSpeech Notification
 		notifications.speak(person.getHome(), message);
 
 		// PushOver Notifications
-		notifications.notifyHome(person.getHome(), message, person.getToken());
+		notifications.notifyHome(person.getHome(), message, token);
 
 		return notifications.getList();
 	}
