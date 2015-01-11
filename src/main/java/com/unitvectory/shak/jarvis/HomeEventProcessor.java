@@ -2,6 +2,7 @@ package com.unitvectory.shak.jarvis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
@@ -20,9 +21,10 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartContact;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartEvent;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
 import com.unitvectory.shak.jarvis.pushover.PushOver;
+import com.unitvectory.shak.jarvis.pushover.PushOverAsyncTask;
 import com.unitvectory.shak.jarvis.pushover.PushOverPriority;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeech;
-import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechResult;
+import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechAsyncTask;
 
 /**
  * The home event processor
@@ -68,6 +70,11 @@ public class HomeEventProcessor {
 	private PushOver pushover;
 
 	/**
+	 * the executor service
+	 */
+	private ExecutorService executor;
+
+	/**
 	 * Creates a new instance of the HomeEventProcessor class.
 	 * 
 	 * @param database
@@ -76,15 +83,18 @@ public class HomeEventProcessor {
 	 *            the push to speech client
 	 * @param pushover
 	 *            the pushover client
+	 * @param executor
+	 *            the executor client
 	 */
 	public HomeEventProcessor(ShakDatabase database, PushToSpeech pushToSpeech,
-			PushOver pushover) {
+			PushOver pushover, ExecutorService executor) {
 		this.database = database;
 		this.pushToSpeech = pushToSpeech;
 		this.contactAction = new SmartContactAction();
 		this.motionAction = new SmartMotionAction();
 		this.locationAction = new PersonLocationAction();
 		this.pushover = pushover;
+		this.executor = executor;
 	}
 
 	/**
@@ -132,8 +142,9 @@ public class HomeEventProcessor {
 
 			if (this.pushover != null & notification.isPush()) {
 				// Send PushOver
-				this.pushover.sendMessage(notification.getPushOverToken(),
-						notification.getNotification(), PushOverPriority.QUIET);
+				this.executor.submit(new PushOverAsyncTask(this.pushover,
+						notification.getPushOverToken(), notification
+								.getNotification(), PushOverPriority.QUIET));
 			} else if (notification.isSpeak()) {
 				// Sent PushToSpeech
 				List<String> deviceIds = this.database.pts().getPushDeviceIds(
@@ -143,14 +154,9 @@ public class HomeEventProcessor {
 				}
 
 				for (String deviceid : deviceIds) {
-					PushToSpeechResult result = this.pushToSpeech.speak(
-							deviceid, notification.getNotification());
-					if (result.isResult()) {
-						String event = notification.getEvent();
-						String text = result.getOutputText();
-						this.database.pts()
-								.insertHistory(deviceid, event, text);
-					}
+					this.executor.submit(new PushToSpeechAsyncTask(
+							this.pushToSpeech, this.database.pts(), deviceid,
+							notification));
 				}
 			}
 		}

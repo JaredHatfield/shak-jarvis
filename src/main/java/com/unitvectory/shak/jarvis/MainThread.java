@@ -1,6 +1,9 @@
 package com.unitvectory.shak.jarvis;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
@@ -71,6 +74,11 @@ public class MainThread extends Thread {
 	private PushOver pushover;
 
 	/**
+	 * the executor service
+	 */
+	private ExecutorService executor;
+
+	/**
 	 * Creates a new instance of MainThread.
 	 * 
 	 * @param config
@@ -83,6 +91,8 @@ public class MainThread extends Thread {
 
 		this.database = new ShakDatabase(config);
 
+		this.executor = Executors.newCachedThreadPool();
+
 		// The pushover client
 		if (config.getPushover() != null && config.getPushover().length() > 0) {
 			this.pushover = new PushOverClient(config.getPushover());
@@ -90,7 +100,7 @@ public class MainThread extends Thread {
 
 		// Make the event processor
 		this.eventProcessor = new HomeEventProcessor(this.database,
-				new PushToSpeechClient(), this.pushover);
+				new PushToSpeechClient(), this.pushover, this.executor);
 
 		// Make the SQS Client
 		AmazonSQSAsyncClient asyncSQS = new AmazonSQSAsyncClient(
@@ -168,6 +178,16 @@ public class MainThread extends Thread {
 			} catch (InterruptedException e) {
 				// Safe to ignore
 			}
+		}
+
+		// Shut down the executor gracefully
+		this.executor.shutdown();
+		try {
+			if (!this.executor.awaitTermination(60, TimeUnit.SECONDS)) {
+				this.executor.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			log.error("Failed to shut down executor.", e);
 		}
 
 		try {

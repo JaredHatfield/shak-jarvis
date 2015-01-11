@@ -25,6 +25,7 @@ import com.unitvectory.shak.jarvis.pushover.PushOverFake;
 import com.unitvectory.shak.jarvis.pushover.PushOverFakeMessage;
 import com.unitvectory.shak.jarvis.pushover.PushOverPriority;
 import com.unitvectory.shak.jarvis.pushtospeech.PushToSpeechFake;
+import com.unitvectory.shak.jarvis.util.SynchronousExecutor;
 
 /**
  * Test the event processor end-to-end.
@@ -416,7 +417,8 @@ public class HomeEventProcessorTest {
 	private HomeEventProcessor getProcessor() {
 		// New processor
 		HomeEventProcessor processor = new HomeEventProcessor(
-				new ShakDatabase(), new PushToSpeechFake(), new PushOverFake());
+				new ShakDatabase(), new PushToSpeechFake(), new PushOverFake(),
+				new SynchronousExecutor());
 
 		// Configure the people
 		PersonLocationMemory pl = (PersonLocationMemory) processor
