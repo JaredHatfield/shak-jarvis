@@ -1,0 +1,11 @@
+{
+  "Type" : "Notification",
+  "MessageId" : "0fffffff-fffff-ffff-ffff-fffffffffff",
+  "TopicArn" : "arn:aws:sns:us-east-1:00000000000:sensors",
+  "Message" : "{\"type\":\"smartthings\",\"version\":\"0.1\",\"auth\":\"foobar\",\"id\":\"1fffffff-fffff-ffff-ffff-fffffffffff\",\"deviceId\":\"2fffffff-fffff-ffff-ffff-fffffffffff\",\"hubId\":\"3fffffff-fffff-ffff-ffff-fffffffffff\",\"locationId\":\"4fffffff-fffff-ffff-ffff-fffffffffff\",\"description\":\"zw device: 0E, command: 2503, payload: 00\",\"descriptionText\":\"Living Room Fan switch is off\",\"name\":\"switch\",\"source\":\"DEVICE\",\"value\":\"off\",\"date\":\"2015-01-18T14:23:06.454Z\"}",
+  "Timestamp" : "2015-01-18T14:23:06.690Z",
+  "SignatureVersion" : "0",
+  "Signature" : "FAKE_SIGNATURE",
+  "SigningCertURL" : "FAKE_SIGNING_CERT_URL",
+  "UnsubscribeURL" : "FAKE_UNSUBSCRIBE_URL"
+}

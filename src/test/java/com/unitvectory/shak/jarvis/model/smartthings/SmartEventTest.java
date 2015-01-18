@@ -1,6 +1,7 @@
 package com.unitvectory.shak.jarvis.model.smartthings;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -103,6 +104,19 @@ public class SmartEventTest {
 		SmartMotion motion = new SmartMotion(smart);
 		assertEquals("motion", motion.getName());
 		assertEquals('A', motion.getStatus());
+	}
+
+	/**
+	 * Tests the Switch
+	 * 
+	 * @throws SmartException
+	 */
+	@Test
+	public void smartSwitchSuccessTest() throws SmartException {
+		SmartThingsPublish smart = this.loadSmart("/messagebodyswitch.json");
+		SmartSwitch mySwitch = new SmartSwitch(smart);
+		assertEquals("switch", mySwitch.getName());
+		assertFalse(mySwitch.getValue());
 	}
 
 	/**

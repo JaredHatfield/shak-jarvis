@@ -11,6 +11,7 @@ import com.unitvectory.shak.jarvis.model.smartthings.SmartLqi;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartMotion;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartPresence;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartRssi;
+import com.unitvectory.shak.jarvis.model.smartthings.SmartSwitch;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartTemperature;
 import com.unitvectory.shak.jarvis.model.smartthings.SmartThreeAxis;
 
@@ -139,6 +140,8 @@ public class SmartThingsPublish {
 			return new SmartPresence(this);
 		} else if (this.name.equals("rssi")) {
 			return new SmartRssi(this);
+		} else if (this.name.equals("switch")) {
+			return new SmartSwitch(this);
 		} else if (this.name.equals("temperature")) {
 			return new SmartTemperature(this);
 		} else if (this.name.equals("threeAxis")) {
