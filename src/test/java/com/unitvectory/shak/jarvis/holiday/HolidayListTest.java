@@ -3,8 +3,10 @@ package com.unitvectory.shak.jarvis.holiday;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +24,31 @@ public class HolidayListTest {
 	@BeforeClass
 	public static void oneTimeSetUp() {
 		holiday = new HolidayList();
+	}
+
+	@Test
+	public void verifyNamesTest() {
+		List<String> days = holiday.getAllHolidays();
+		assertNotNull(days);
+		assertTrue(days.size() > 0);
+
+		Map<String, String> names = holiday.getAllHolidayNames();
+		assertNotNull(names);
+		assertTrue(names.size() > 0);
+
+		// Make sure all of the names are defined
+		for (String day : days) {
+			if (!names.containsKey(day)) {
+				fail(day + " missing name");
+			}
+		}
+
+		// Make sure there are no extra names
+		for (String day : names.keySet()) {
+			if (!days.contains(day)) {
+				fail(day + " never used");
+			}
+		}
 	}
 
 	@Test

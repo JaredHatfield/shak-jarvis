@@ -2,6 +2,9 @@ package com.unitvectory.shak.jarvis.holiday;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,17 +25,32 @@ public class HolidayList {
 	private Map<Integer, Map<Integer, Map<Integer, List<String>>>> holidays;
 
 	/**
-	 * the messages
+	 * the list of holidays
 	 */
-	private ResourceBundle messages;
+	private List<String> available;
+
+	/**
+	 * the names
+	 */
+	private Map<String, String> names;
 
 	/**
 	 * Initializes a new instance of the HolidayList class.
 	 */
 	public HolidayList() {
+		this.available = new ArrayList<String>();
+
 		// Get the messages
-		this.messages = ResourceBundle.getBundle("Holidays",
+		ResourceBundle resource = ResourceBundle.getBundle("Holidays",
 				Locale.getDefault());
+
+		// Store all of the messages in a map
+		this.names = new HashMap<String, String>();
+		Enumeration<String> keys = resource.getKeys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			names.put(key, resource.getString(key));
+		}
 
 		// Populate the years
 		this.holidays = new TreeMap<Integer, Map<Integer, Map<Integer, List<String>>>>();
@@ -71,7 +89,7 @@ public class HolidayList {
 		// Localize all of the events
 		List<String> holidayEvents = this.getEvents(year, month, day);
 		for (String holidayEvent : holidayEvents) {
-			holidayNames.add(this.messages.getString(holidayEvent));
+			holidayNames.add(this.names.get(holidayEvent));
 		}
 
 		return holidayNames;
@@ -121,6 +139,27 @@ public class HolidayList {
 	 */
 	void add(int year, int month, int day, String name) {
 		this.holidays.get(year).get(month + 1).get(day).add(name);
+		if (!this.available.contains(name)) {
+			this.available.add(name);
+		}
+	}
+
+	/**
+	 * Gets all of the holidays
+	 * 
+	 * @return the list of holidays
+	 */
+	List<String> getAllHolidays() {
+		return Collections.unmodifiableList(this.available);
+	}
+
+	/**
+	 * Gets all of the holiday names
+	 * 
+	 * @return the map of names
+	 */
+	Map<String, String> getAllHolidayNames() {
+		return Collections.unmodifiableMap(this.names);
 	}
 
 	/**
